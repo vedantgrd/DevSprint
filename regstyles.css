@@ -1,220 +1,205 @@
-/* ===============================
-   BASIC RESET
-=================================*/
+/* RESET */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* ===============================
-   BODY
-=================================*/
+/* BODY BACKGROUND */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
 
     background:
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        linear-gradient(135deg, rgba(15,23,42,0.9), rgba(88,28,135,0.9)),
         url("https://i.postimg.cc/RhrM9VHT/Gemini-Generated-Image-rkfw2jrkfw2jrkfw.png");
 
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
-
     color: white;
 }
 
-/* ===============================
-   MAIN WRAPPER
-=================================*/
+/* CENTER WRAPPER */
 .main-wrapper {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 20px;
 }
 
-/* ===============================
-   CARD / CONTAINER
-=================================*/
+/* CARD */
 .card {
     width: 100%;
-    max-width: 700px;
+    max-width: 720px;
 
-    background-image: url("https://i.postimg.cc/6QS5QhZy/Gemini-Generated-Image-r44kl1r44kl1r44k.png");
-    background-size: cover;
-    background-position: center;
+    backdrop-filter: blur(12px);
+    background: rgba(21, 26, 53, 0.85);
 
-    background-color: rgba(21, 26, 53, 0.95);
-    background-blend-mode: darken;
+    border-radius: 16px;
+    padding: 35px;
 
-    border: 2px solid #8b5cf6;
-    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.5);
 
-    padding: 30px;
-    margin: 20px;
-
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
     transition: 0.3s ease;
 }
 
-/* Hover effect on card */
+/* HOVER GLOW */
 .card:hover {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-    transform: translateY(-5px);
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.7);
+    transform: translateY(-6px);
 }
 
-/* ===============================
-   HEADER
-=================================*/
+/* HEADER */
 .header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .header img {
     width: 100%;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border: 2px solid white;
-    transition: 0.3s ease;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
 }
 
-/* Image hover */
-.header img:hover {
-    transform: scale(1.02);
-}
-
-/* ===============================
-   HEADINGS
-=================================*/
 h1 {
+    font-size: 28px;
     color: #ec4899;
-    margin-bottom: 5px;
 }
 
 h2 {
-    color: #8b5cf6;
-    margin: 15px 0 10px 0;
+    color: #a78bfa;
+    margin-bottom: 10px;
 }
 
-/* ===============================
-   TEXT
-=================================*/
 p {
-    margin-bottom: 10px;
-}
-
-ul {
-    padding-left: 20px;
-    margin-bottom: 15px;
-}
-
-ul li {
-    margin-bottom: 6px;
-}
-
-/* ===============================
-   FORM
-=================================*/
-label {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-/* Input & Select */
-input,
-select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-
-    border: 1px solid #ccc;
-    border-radius: 6px;
-
     font-size: 14px;
-
-    transition: 0.3s ease;
+    opacity: 0.9;
 }
 
-/* Focus effect */
-input:focus,
-select:focus {
+/* FORM */
+label {
+    margin-top: 12px;
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* INPUT STYLE */
+input {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+    border: 1px solid transparent;
+
+    background: rgba(255,255,255,0.08);
+    color: white;
+
+    transition: 0.25s ease;
+}
+
+/* PLACEHOLDER */
+input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+/* INPUT HOVER */
+input:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+/* INPUT FOCUS */
+input:focus {
     outline: none;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 8px rgba(139, 92, 246, 0.6);
+    border: 1px solid #8b5cf6;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
 }
 
-/* Radio & Checkbox spacing */
-.radio-group,
-.checkbox-group {
-    margin: 10px 0;
-}
-
-/* ===============================
-   BUTTONS
-=================================*/
+/* BUTTONS */
 .button-group {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    gap: 12px;
+    margin-top: 15px;
 }
 
-/* Submit button */
-input[type="submit"] {
+input[type="submit"],
+input[type="reset"] {
     flex: 1;
-    background-color: #8b5cf6;
-    color: white;
+    padding: 12px;
+    border-radius: 8px;
     border: none;
-    padding: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    border-radius: 6px;
     transition: 0.3s ease;
+}
+
+/* SUBMIT */
+input[type="submit"] {
+    background: linear-gradient(45deg, #8b5cf6, #6366f1);
+    color: white;
 }
 
 input[type="submit"]:hover {
-    background-color: #6d28d9;
     transform: scale(1.05);
+    box-shadow: 0 0 15px #8b5cf6;
 }
 
-/* Reset button */
+/* RESET */
 input[type="reset"] {
-    flex: 1;
-    background-color: #ec4899;
+    background: linear-gradient(45deg, #ec4899, #be185d);
     color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: 0.3s ease;
 }
 
 input[type="reset"]:hover {
-    background-color: #be185d;
     transform: scale(1.05);
+    box-shadow: 0 0 15px #ec4899;
 }
 
-/* ===============================
-   LINKS
-=================================*/
-a {
-    color: #8b5cf6;
-    text-decoration: none;
-    transition: 0.3s;
+/* ERROR TEXT */
+.error {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-bottom: 5px;
 }
 
-a:hover {
-    color: #ec4899;
-    text-decoration: underline;
+/* INPUT STATES */
+.input-error {
+    border: 1px solid red !important;
+    box-shadow: 0 0 8px red;
 }
 
-/* ===============================
-   FOOTER
-=================================*/
-.footer-links {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
+.input-success {
+    border: 1px solid #00ff99 !important;
+    box-shadow: 0 0 8px #00ff99;
+}
+
+/* PASSWORD RULES */
+.password-rules {
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+.rule {
+    display: block;
+    margin: 2px 0;
+}
+
+/* VALID / INVALID */
+.valid {
+    color: #00ff99;
+}
+
+.invalid {
+    color: #ff6b6b;
+}
+
+/* SCROLL SMOOTH */
+html {
+    scroll-behavior: smooth;
 }
