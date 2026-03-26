@@ -8,7 +8,7 @@ function cleanText(text) {
     return text.replace(/\s+/g, " ").trim();
 }
 
-/* PHONE LIMIT */
+/* PHONE INPUT (ONLY DIGITS, MAX 10) */
 document.getElementById("phone").addEventListener("input", function () {
     this.value = this.value.replace(/[^0-9]/g, "");
     if (this.value.length > 10) {
@@ -23,22 +23,15 @@ passwordBox.addEventListener("input", function () {
     let message = "";
 
     if (pass.length < 8) {
-        message += "<span class='rule invalid'>• Minimum 8 characters required</span>";
+        message += "<span class='rule invalid'>• Minimum 8 characters required</span><br>";
     }
 
-    if (pass.indexOf("@") === -1 && pass.indexOf("#") === -1 && pass.indexOf("$") === -1) {
-        message += "<span class='rule invalid'>• Add a special character (@ # $)</span>";
+    if (!/[#@$]/.test(pass)) {
+        message += "<span class='rule invalid'>• Add a special character (@ # $)</span><br>";
     }
 
-    let hasNumber = false;
-    for (let i = 0; i < pass.length; i++) {
-        if (pass[i] >= '0' && pass[i] <= '9') {
-            hasNumber = true;
-        }
-    }
-
-    if (!hasNumber) {
-        message += "<span class='rule invalid'>• Add a number</span>";
+    if (!/[0-9]/.test(pass)) {
+        message += "<span class='rule invalid'>• Add a number</span><br>";
     }
 
     if (message === "") {
@@ -50,80 +43,64 @@ passwordBox.addEventListener("input", function () {
 
 /* FORM SUBMIT */
 form.addEventListener("submit", function (e) {
-    e.preventDefault();
 
     let isValid = true;
 
     let first = cleanText(document.getElementById("firstName").value);
     let middle = cleanText(document.getElementById("middleName").value);
     let last = cleanText(document.getElementById("lastName").value);
-    let email = document.getElementById("email").value;
+    let email = document.getElementById("email").value.trim();
     let phone = document.getElementById("phone").value;
     let password = document.getElementById("password").value;
     let confirm = document.getElementById("confirmPassword").value;
     let city = cleanText(document.getElementById("city").value);
 
-    // Clear errors
+    /* CLEAR OLD ERRORS */
     document.querySelectorAll(".error").forEach(e => e.innerText = "");
+    document.querySelectorAll("input").forEach(i => i.classList.remove("input-error"));
 
-    // FIRST NAME
+    /* VALIDATIONS */
+
     if (first === "") {
         showError("firstName", "firstNameError", "Enter first name");
         isValid = false;
     }
 
-    // LAST NAME
     if (last === "") {
         showError("lastName", "lastNameError", "Enter last name");
         isValid = false;
     }
 
-    // EMAIL
-    if (email.indexOf("@") === -1 || email.indexOf(".") === -1) {
+    if (!email.includes("@") || !email.includes(".")) {
         showError("email", "emailError", "Invalid email");
         isValid = false;
     }
 
-    // PHONE
     if (phone.length !== 10) {
         showError("phone", "phoneError", "Enter 10 digit number");
         isValid = false;
     }
 
-    // PASSWORD
     if (password.length < 8) {
         showError("password", "passwordError", "Weak password");
         isValid = false;
     }
 
-    // CONFIRM
     if (password !== confirm) {
         showError("confirmPassword", "confirmError", "Passwords do not match");
         isValid = false;
     }
 
-    // CITY
     if (city === "") {
         showError("city", "cityError", "Enter city");
         isValid = false;
     }
 
-    // FINAL OUTPUT
-    if (isValid) {
-        alert(
-`Registration Successful 🎉
-
-First Name: ${first}
-Middle Name: ${middle}
-Last Name: ${last}
-Email: ${email}
-Phone: ${phone}
-City: ${city}`
-        );
-
-        form.reset();
-        rulesBox.innerHTML = "";
+    /* FINAL SUBMIT CONTROL */
+    if (!isValid) {
+        e.preventDefault(); // stop submission ONLY if invalid
     }
+    // else → allow normal submit to PHP ✅
 });
 
 /* ERROR FUNCTION */
