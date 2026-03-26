@@ -40,7 +40,7 @@
         <h1>Build. Compete.<br>Sprint to Success.</h1>
         <p>Your gateway to the most exciting hackathons and coding events. Connect with innovators, showcase your skills, and turn ideas into reality.</p>
         <div class="hero-cta">
-            <a href="hackathons.html" class="btn btn-primary">
+            <a href="hackathons.php" class="btn btn-primary">
                 Explore Events
                 <span>→</span>
             </a>
