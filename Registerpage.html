@@ -9,25 +9,12 @@
 <body>
 
 <div class="main-wrapper">
-
     <div class="card">
 
         <div class="header">
-            <img src="https://i.postimg.cc/wjfrK4K0/WP-Logo-Reg.png" alt="Register Banner">
+            <img src="https://i.postimg.cc/wjfrK4K0/WP-Logo-Reg.png">
             <h1>DevSprint</h1>
-            <p>Find and participate in hackathons near your location</p>
-        </div>
-
-        <hr>
-
-        <div class="info-section">
-            <h2>Why Create an Account?</h2>
-            <ul>
-                <li>Get notifications for nearby hackathons</li>
-                <li>Explore hackathons by domain and city</li>
-                <li>Participate in online and offline events</li>
-                <li>Build skills and grow your network</li>
-            </ul>
+            <p>Find hackathons near you</p>
         </div>
 
         <hr>
@@ -35,48 +22,39 @@
         <div class="form-section">
             <h2>User Registration</h2>
 
-            <form>
+            <form id="registerForm">
 
-                <label>Full Name</label>
-                <input type="text" required>
+                <label>First Name</label>
+                <input type="text" id="firstName">
+                <small class="error" id="firstNameError"></small>
 
-                <label>Email Address</label>
-                <input type="email" required>
+                <label>Middle Name</label>
+                <input type="text" id="middleName">
+
+                <label>Last Name</label>
+                <input type="text" id="lastName">
+                <small class="error" id="lastNameError"></small>
+
+                <label>Email</label>
+                <input type="text" id="email">
+                <small class="error" id="emailError"></small>
 
                 <label>Mobile Number</label>
-                <input type="tel" required>
+                <input type="text" id="phone">
+                <small class="error" id="phoneError"></small>
 
                 <label>Password</label>
-                <input type="password" required>
+                <input type="password" id="password">
+                <div id="passwordRules" class="password-rules"></div>
+                <small class="error" id="passwordError"></small>
 
                 <label>Confirm Password</label>
-                <input type="password" required>
+                <input type="password" id="confirmPassword">
+                <small class="error" id="confirmError"></small>
 
                 <label>City</label>
-                <input type="text" required>
-
-                <label>Hackathon Interest Domain</label>
-                <select required>
-                    <option value="">Select Domain</option>
-                    <option>Web Development</option>
-                    <option>Mobile App Development</option>
-                    <option>AI / Machine Learning</option>
-                    <option>Cyber Security</option>
-                    <option>Blockchain</option>
-                    <option>Open Innovation</option>
-                </select>
-
-                <label>Experience Level</label>
-                <div class="radio-group">
-                    <input type="radio" name="level" required> Beginner
-                    <input type="radio" name="level"> Intermediate
-                    <input type="radio" name="level"> Advanced
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" required>
-                    <span>I agree to the <a href="#">Terms and Conditions</a></span>
-                </div>
+                <input type="text" id="city">
+                <small class="error" id="cityError"></small>
 
                 <div class="button-group">
                     <input type="submit" value="Register">
@@ -86,14 +64,10 @@
             </form>
         </div>
 
-        <div class="footer-links">
-            <p>Already have an account? <a href="login.html">Login Here</a></p>
-            <p>Need help? <a href="#">Contact Support</a></p>
-        </div>
-
     </div>
-
 </div>
+
+<script src="reglogic.js"></script>
 
 </body>
 </html>
