@@ -3,12 +3,7 @@
 session_start();
 
 // Database connection
-$conn = new mysqli("localhost", "root", "", "devsprint");
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+require_once 'db_connect.php';
 
 // Check if form submitted
 if (isset($_POST['register'])) {

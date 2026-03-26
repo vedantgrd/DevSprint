@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,17 +14,22 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="index.html" class="nav-brand">
+            <a href="index.php" class="nav-brand">
                 <img src="logo.png" alt="DevSprint Logo">
                 <span class="nav-brand-text">DevSprint</span>
             </a>
             <button class="nav-toggle" aria-label="Toggle menu">☰</button>
             <ul class="nav-menu">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="hackathons.html">Hackathons</a></li>
+                <li><a href="index.php" class="active">Home</a></li>
+                <li><a href="hackathons.php">Hackathons</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html" class="nav-btn">Get Started</a></li>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <li><a href="profile.php">My Profile</a></li>
+                    <li><a href="logout.php" class="nav-btn" style="background: #ef4444;">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.html" class="nav-btn">Get Started</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </nav>
