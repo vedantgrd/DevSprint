@@ -1,0 +1,27 @@
+USE devsprint;
+
+ALTER TABLE users 
+ADD COLUMN bio TEXT,
+ADD COLUMN skills VARCHAR(255),
+ADD COLUMN github VARCHAR(255),
+ADD COLUMN linkedin VARCHAR(255);
+
+CREATE TABLE IF NOT EXISTS teams (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    hackathon_id INT NOT NULL,
+    leader_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (hackathon_id) REFERENCES hackathons(id) ON DELETE CASCADE,
+    FOREIGN KEY (leader_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+    team_id INT NOT NULL,
+    user_id INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'Pending',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (team_id, user_id),
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

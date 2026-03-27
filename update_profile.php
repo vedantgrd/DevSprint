@@ -12,10 +12,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $last = trim($_POST['last']);
     $phone = trim($_POST['phone']);
     $city = trim($_POST['city']);
+    $skills = trim($_POST['skills'] ?? '');
+    $github = trim($_POST['github'] ?? '');
+    $linkedin = trim($_POST['linkedin'] ?? '');
+    $bio = trim($_POST['bio'] ?? '');
     $user_id = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("UPDATE users SET first_name=?, middle_name=?, last_name=?, phone=?, city=? WHERE id=?");
-    $stmt->bind_param("sssssi", $first, $middle, $last, $phone, $city, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET first_name=?, middle_name=?, last_name=?, phone=?, city=?, skills=?, github=?, linkedin=?, bio=? WHERE id=?");
+    $stmt->bind_param("sssssssssi", $first, $middle, $last, $phone, $city, $skills, $github, $linkedin, $bio, $user_id);
     
     if ($stmt->execute()) {
         $_SESSION['first_name'] = $first;

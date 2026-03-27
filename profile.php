@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 require_once 'db_connect.php';
 
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT first_name, middle_name, last_name, email, phone, city FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT first_name, middle_name, last_name, email, phone, city, bio, skills, github, linkedin FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -69,12 +69,19 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
     <div class="card">
         <h2>Update Profile</h2>
         <form action="update_profile.php" method="POST">
-            <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']) ?>" required></div>
-            <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']) ?>"></div>
-            <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']) ?>" required></div>
-            <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>"></div>
-            <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']) ?>"></div>
-            <button type="submit" class="btn-save">Save Changes</button>
+            <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
+            <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
+            <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']??'') ?>"></div>
+            <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']??'') ?>"></div>
+            
+            <h3 style="margin-top:20px; color:#c4b5fd;">Developer Info</h3>
+            <div class="form-group"><label>Skills (comma separated)</label><input type="text" name="skills" value="<?= htmlspecialchars($user['skills']??'') ?>" placeholder="e.g. React, Python, UI/UX"></div>
+            <div class="form-group"><label>GitHub URL</label><input type="text" name="github" value="<?= htmlspecialchars($user['github']??'') ?>" placeholder="https://github.com/yourusername"></div>
+            <div class="form-group"><label>LinkedIn URL</label><input type="text" name="linkedin" value="<?= htmlspecialchars($user['linkedin']??'') ?>" placeholder="https://linkedin.com/in/yourusername"></div>
+            <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white;" placeholder="Tell us about yourself..."><?= htmlspecialchars($user['bio']??'') ?></textarea></div>
+
+            <button type="submit" class="btn-save" style="margin-top: 15px;">Save Changes</button>
         </form>
     </div>
 

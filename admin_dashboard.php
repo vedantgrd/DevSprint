@@ -11,7 +11,7 @@ $hackathons = $conn->query("SELECT * FROM hackathons ORDER BY created_at DESC");
 
 // Fetch Applications
 $apps_query = "
-    SELECT a.id, u.first_name, u.last_name, u.email, h.title, a.applied_at 
+    SELECT a.id, u.first_name, u.last_name, u.email, h.title, a.applied_at, a.status 
     FROM applications a 
     JOIN users u ON a.user_id = u.id 
     JOIN hackathons h ON a.hackathon_id = h.id 
@@ -72,13 +72,32 @@ th { color: #8b5cf6; }
             <h3>Recent Applications</h3>
             <div style="overflow-x:auto;">
             <table>
-                <tr><th>User</th><th>Email</th><th>Hackathon</th><th>Date</th></tr>
+                <tr><th>User</th><th>Email</th><th>Hackathon</th><th>Date</th><th>Status</th><th>Actions</th></tr>
                 <?php if($applications && $applications->num_rows > 0): while($a = $applications->fetch_assoc()): ?>
                 <tr>
                     <td><?= htmlspecialchars($a['first_name'] . ' ' . $a['last_name']) ?></td>
                     <td><?= htmlspecialchars($a['email']) ?></td>
                     <td><?= htmlspecialchars($a['title']) ?></td>
                     <td><?= date('M d, Y', strtotime($a['applied_at'])) ?></td>
+                    <td>
+                        <span style="padding:4px 8px; border-radius:12px; font-size:0.8em; font-weight:bold; background:<?= $a['status']=='Accepted'?'#10b981':($a['status']=='Rejected'?'#ef4444':'#f59e0b') ?>; color:white;">
+                            <?= htmlspecialchars($a['status']) ?>
+                        </span>
+                    </td>
+                    <td>
+                        <?php if($a['status'] === 'Pending'): ?>
+                            <form action="admin_update_application.php" method="POST" style="display:inline;">
+                                <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
+                                <input type="hidden" name="status" value="Accepted">
+                                <button type="submit" style="background:#10b981; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;" title="Accept">✓</button>
+                            </form>
+                            <form action="admin_update_application.php" method="POST" style="display:inline;">
+                                <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
+                                <input type="hidden" name="status" value="Rejected">
+                                <button type="submit" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;" title="Reject">✕</button>
+                            </form>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <?php endwhile; else: ?>
                 <tr><td colspan="4">No applications yet.</td></tr>
