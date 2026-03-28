@@ -1,12 +1,23 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login_view.php");
     exit();
 }
 require_once 'db_connect.php';
 
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+// Get current user's skills for AI matchmaking
+$cu_stmt = $conn->prepare("SELECT skills FROM users WHERE id = ?");
+$cu_stmt->bind_param("i", $_SESSION['user_id']);
+$cu_stmt->execute();
+$cu_res = $cu_stmt->get_result()->fetch_assoc();
+$cu_skills_raw = $cu_res ? $cu_res['skills'] : '';
+$cu_stmt->close();
+
+$my_skills = array_map('trim', array_map('strtolower', explode(',', $cu_skills_raw)));
 
 $sql = "SELECT id, first_name, last_name, skills, bio, github, linkedin FROM users WHERE id != ?";
 if ($search !== '') {
@@ -18,10 +29,36 @@ if ($search !== '') {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $_SESSION['user_id']);
 }
-
 $stmt->execute();
-$users = $stmt->get_result();
+$users_raw = $stmt->get_result();
 $stmt->close();
+
+$scored_users = [];
+while ($u = $users_raw->fetch_assoc()) {
+    $their_skills_raw = $u['skills'] ?: '';
+    $their_skills = array_filter(array_map('trim', array_map('strtolower', explode(',', $their_skills_raw))));
+    
+    // Calculate Jaccard Similarity Score (Intersection / Union)
+    if (count($my_skills) === 0 && count($their_skills) === 0) {
+        $score = 0;
+    } else {
+        $intersection = count(array_intersect($my_skills, $their_skills));
+        $union = count(array_unique(array_merge($my_skills, $their_skills)));
+        $score = $union > 0 ? ($intersection / $union) * 100 : 0;
+    }
+    
+    // Give a small boost to any user if no current skills are defined so the list isn't totally zeroed
+    if (empty($cu_skills_raw)) $score = rand(10, 30); // random generic score
+    
+    $u['match_score'] = round($score);
+    $scored_users[] = $u;
+}
+
+// Sort by highest match score first
+usort($scored_users, function($a, $b) {
+    return $b['match_score'] <=> $a['match_score'];
+});
+
 
 // Fetch teams led by current user to allow inviting
 $my_teams_stmt = $conn->prepare("SELECT id, name FROM teams WHERE leader_id = ?");
@@ -48,7 +85,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 .user-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 20px; padding: 25px; transition: transform 0.3s; }
 .user-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2); }
-.user-card h3 { margin: 0 0 10px 0; color: #fff; font-size: 1.4rem; }
+.user-card h3 { margin: 0 0 5px 0; color: #fff; font-size: 1.4rem; display:flex; justify-content:space-between; align-items:center; }
+.match-badge { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; border: 1px solid #10b981; }
 .skills { color: #8b5cf6; font-weight: bold; margin-bottom: 15px; font-size: 0.9em; }
 .bio { color: #cbd5e1; font-size: 0.95em; line-height: 1.5; margin-bottom: 15px; height: 60px; overflow: hidden; text-overflow: ellipsis; }
 .links a { color: #ec4899; text-decoration: none; margin-right: 15px; font-size: 0.9em; font-weight:bold; }
@@ -82,9 +120,14 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
     </form>
 
     <div class="grid">
-        <?php if($users && $users->num_rows > 0): while($u = $users->fetch_assoc()): ?>
+        <?php if(!empty($scored_users)): foreach($scored_users as $u): ?>
             <div class="user-card">
-                <h3><?= htmlspecialchars($u['first_name'] . ' ' . $u['last_name']) ?></h3>
+                <h3>
+                    <?= htmlspecialchars($u['first_name'] . ' ' . $u['last_name']) ?>
+                    <?php if($u['match_score'] > 0): ?>
+                    <span class="match-badge"><?= $u['match_score'] ?>% Match</span>
+                    <?php endif; ?>
+                </h3>
                 <div class="skills"><?= htmlspecialchars($u['skills'] ?: 'No skills listed') ?></div>
                 <div class="bio"><?= htmlspecialchars($u['bio'] ?: 'This user prefers to keep an air of mystery about them.') ?></div>
                 <div class="links">
@@ -95,6 +138,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                 <?php if(count($my_teams_arr) > 0): ?>
                 <div class="invite-form">
                     <form action="team_action.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                         <input type="hidden" name="action" value="invite">
                         <input type="hidden" name="target_user" value="<?= $u['id'] ?>">
                         <select name="team_id" required>
@@ -108,7 +153,7 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                 </div>
                 <?php endif; ?>
             </div>
-        <?php endwhile; else: ?>
+        <?php endforeach; else: ?>
             <p style="text-align:center; grid-column:1/-1; color:#94a3b8; font-size:1.2rem;">No developers found matching your criteria.</p>
         <?php endif; ?>
     </div>

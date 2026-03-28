@@ -1,7 +1,8 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login_view.php");
     exit();
 }
 require_once 'db_connect.php';
@@ -65,10 +66,23 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
     </div>
 </nav>
 
+<?php
+$github_username = '';
+if (!empty($user['github'])) {
+    $parsed_url = parse_url($user['github']);
+    if (isset($parsed_url['path'])) {
+        $path_parts = explode('/', trim($parsed_url['path'], '/'));
+        $github_username = $path_parts[0] ?? '';
+    }
+}
+?>
+
 <div class="profile-container">
     <div class="card">
         <h2>Update Profile</h2>
         <form action="update_profile.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
             <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
             <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
@@ -100,6 +114,65 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
             <p>You haven't applied to any hackathons yet.</p>
         <?php endif; ?>
     </div>
+
+    <?php if ($github_username): ?>
+    <div class="card" id="github-card">
+        <h2>GitHub Activity</h2>
+        <div id="github-spinner" style="color: #cbd5e1;">Loading GitHub data...</div>
+        <div id="github-content" style="display:none;">
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom: 20px;">
+                <img id="gh-avatar" src="" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid #8b5cf6;">
+                <div>
+                    <h3 id="gh-name" style="margin:0; color:#fff;"></h3>
+                    <p style="margin:5px 0 0 0; font-size: 0.9em; color:#cbd5e1;"><span id="gh-repos">0</span> Repositories • <span id="gh-followers">0</span> Followers</p>
+                </div>
+            </div>
+            <h4 style="color:#c4b5fd; margin-bottom: 10px;">Recent Repos</h4>
+            <div id="gh-repos-list"></div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('https://api.github.com/users/<?= htmlspecialchars($github_username) ?>')
+            .then(res => res.json())
+            .then(data => {
+                if(data.message && data.message === "Not Found") {
+                    document.getElementById('github-spinner').innerText = "GitHub user not found.";
+                    return;
+                }
+                document.getElementById('github-spinner').style.display = 'none';
+                document.getElementById('github-content').style.display = 'block';
+                document.getElementById('gh-avatar').src = data.avatar_url;
+                document.getElementById('gh-name').innerText = data.name || data.login;
+                document.getElementById('gh-repos').innerText = data.public_repos;
+                document.getElementById('gh-followers').innerText = data.followers;
+                
+                // Fetch repos
+                fetch('https://api.github.com/users/<?= htmlspecialchars($github_username) ?>/repos?sort=updated&per_page=3')
+                    .then(r => r.json())
+                    .then(repos => {
+                        let html = '';
+                        if(repos.length > 0) {
+                            repos.forEach(repo => {
+                                html += `<div class="app-item" style="border-left-color: #ec4899; margin-bottom:10px;">
+                                            <h4 style="margin:0 0 5px 0;"><a href="${repo.html_url}" target="_blank" style="color:#ec4899; text-decoration:none;">${repo.name}</a></h4>
+                                            <p style="margin:0; font-size:0.85em; color:#cbd5e1;">${repo.description ? repo.description.substring(0, 60)+'...' : 'No description'}</p>
+                                            ${repo.language ? `<span style="display:inline-block; margin-top:5px; font-size:0.8em; color:#8b5cf6; font-weight:bold;">${repo.language}</span>` : ''}
+                                         </div>`;
+                            });
+                        } else {
+                            html = '<p>No public repos.</p>';
+                        }
+                        document.getElementById('gh-repos-list').innerHTML = html;
+                    });
+            })
+            .catch(err => {
+                document.getElementById('github-spinner').innerText = "Failed to load GitHub data.";
+            });
+    });
+    </script>
+    <?php endif; ?>
 </div>
 </body>
 </html>

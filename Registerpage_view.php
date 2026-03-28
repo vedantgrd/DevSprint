@@ -1,3 +1,4 @@
+<?php require_once 'csrf.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +28,8 @@
 
             <!-- FORM: POST to register.php -->
             <form id="registerForm" method="POST" action="register.php">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
 
                 <!-- First Name -->
                 <label>First Name</label>

@@ -1,7 +1,8 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login_view.php");
     exit();
 }
 require_once 'db_connect.php';
@@ -97,6 +98,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
         <?php if(!$is_member): ?>
             <div style="text-align:center; margin-bottom: 30px;">
                 <form action="team_action.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                     <input type="hidden" name="action" value="request_join">
                     <input type="hidden" name="team_id" value="<?= $team['id'] ?>">
                     <button type="submit" class="btn" style="padding:12px 25px; font-size:1.1rem;">Request to Join Team</button>
@@ -118,12 +121,16 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                     <?php if($is_leader && $m['status'] === 'Pending'): ?>
                         <div>
                             <form action="team_action.php" method="POST" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                                 <input type="hidden" name="action" value="accept">
                                 <input type="hidden" name="team_id" value="<?= $team['id'] ?>">
                                 <input type="hidden" name="target_user" value="<?= $m['id'] ?>">
                                 <button type="submit" class="btn">Accept</button>
                             </form>
                             <form action="team_action.php" method="POST" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                                 <input type="hidden" name="action" value="reject">
                                 <input type="hidden" name="team_id" value="<?= $team['id'] ?>">
                                 <input type="hidden" name="target_user" value="<?= $m['id'] ?>">
@@ -135,16 +142,88 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
             <?php endforeach; ?>
         </ul>
 
+        <?php if($is_member && $user_status === 'Accepted' || $is_leader): ?>
+        <div style="margin-top:30px; padding:20px; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid rgba(139, 92, 246, 0.2);">
+            <h3 style="margin-top:0;">Team Chat</h3>
+            <div id="chat-box" style="height:250px; overflow-y:auto; background:#1e293b; border-radius:8px; padding:15px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+                <div style="text-align:center; color:#94a3b8; font-size:0.9em;">Loading messages...</div>
+            </div>
+            <form id="chat-form" style="display:flex; gap:10px;">
+                <input type="hidden" id="chat-csrf" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                <input type="text" id="chat-msg" required placeholder="Type a message..." style="flex:1; padding:12px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:white;">
+                <button type="submit" class="btn">Send</button>
+            </form>
+        </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const teamId = <?= $team['id'] ?>;
+            const chatBox = document.getElementById('chat-box');
+            const chatForm = document.getElementById('chat-form');
+            const chatMsg = document.getElementById('chat-msg');
+            const csrfToken = document.getElementById('chat-csrf').value;
+
+            function loadMessages() {
+                fetch(`api_chat.php?team_id=${teamId}`)
+                .then(r => r.json())
+                .then(msgs => {
+                    chatBox.innerHTML = '';
+                    if (msgs.length === 0) {
+                        chatBox.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.9em;">Say hello to your team!</div>';
+                        return;
+                    }
+                    msgs.forEach(m => {
+                        const isMe = m.sender_id == <?= $user_id ?>;
+                        const bubble = document.createElement('div');
+                        bubble.style.maxWidth = '75%';
+                        bubble.style.padding = '10px 15px';
+                        bubble.style.borderRadius = '15px';
+                        bubble.style.marginBottom = '5px';
+                        bubble.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
+                        bubble.style.background = isMe ? 'linear-gradient(135deg, #8b5cf6, #ec4899)' : '#334155';
+                        bubble.style.color = 'white';
+                        bubble.innerHTML = `<span style="font-size:0.8em; font-weight:bold; opacity:0.8; display:block; margin-bottom:3px;">${isMe ? 'You' : m.first_name}</span>${m.message}`;
+                        chatBox.appendChild(bubble);
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = chatMsg.value.trim();
+                if(!text) return;
+                
+                const fd = new FormData();
+                fd.append('team_id', teamId);
+                fd.append('message', text);
+                fd.append('csrf_token', csrfToken);
+
+                fetch('api_chat.php', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(() => { chatMsg.value = ''; loadMessages(); });
+            });
+
+            loadMessages();
+            setInterval(loadMessages, 3000); // Polling every 3s
+        });
+        </script>
+        <?php endif; ?>
+
         <?php if($is_leader): ?>
         <div style="margin-top:30px; padding-top:20px; border-top:1px solid rgba(139, 92, 246, 0.3);">
             <h3>Team Settings (Leader Only)</h3>
             <form action="team_action.php" method="POST" style="margin-bottom:15px; display:flex; gap:10px;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                 <input type="hidden" name="action" value="update_team">
                 <input type="hidden" name="team_id" value="<?=$team['id']?>">
                 <input type="text" name="team_name" value="<?=htmlspecialchars($team['name'])?>" required style="padding:10px; border-radius:5px; border:1px solid #475569; background:#1e293b; color:white; flex:1;">
                 <button type="submit" class="btn" style="border-radius:5px;">Update Name</button>
             </form>
             <form action="team_action.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this team entirely? This will remove all members and applications tied to it.');">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                 <input type="hidden" name="action" value="delete_team">
                 <input type="hidden" name="team_id" value="<?=$team['id']?>">
                 <button type="submit" class="btn btn-danger" style="border-radius:5px;">Delete Team Entirely</button>

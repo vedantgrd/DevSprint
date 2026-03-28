@@ -1,7 +1,8 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Please log in first.'); window.location.href='login.html';</script>";
+    echo "<script>alert('Please log in first.'); window.location.href='login_view.php';</script>";
     exit();
 }
 require_once 'db_connect.php';
@@ -58,6 +59,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
         <h3>Apply Individually</h3>
         <p>Participate on your own. You will still be eligible for standard prizes.</p>
         <form action="apply.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <input type="hidden" name="hackathon_id" value="<?=$hack_id?>">
             <button class="btn" type="submit">Apply as Individual</button>
         </form>
@@ -71,6 +74,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
         
         <?php if($led_teams && $led_teams->num_rows > 0): ?>
             <form action="apply.php" method="POST" style="margin-bottom:20px; margin-top:15px; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                 <input type="hidden" name="hackathon_id" value="<?=$hack_id?>">
                 <select name="team_id" required style="padding:10px; border-radius:5px; border:1px solid #475569; background:#1e293b; color:white; width:100%; margin-bottom:10px;">
                     <option value="">-- Select Team to Apply --</option>

@@ -1,3 +1,4 @@
+<?php require_once 'csrf.php'; ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -134,7 +135,7 @@ Find Nearby Hackathons & Coding Events
 <a href="index.html">Home</a> |
 <a href="hackathons.html">Hackathons</a> |
 <a href="contact.html">Contact</a> |
-<a href="login.html">Login</a>
+<a href="login_view.php">Login</a>
 </nav>
 
 <hr>
@@ -146,6 +147,8 @@ Find Nearby Hackathons & Coding Events
 </div>
 
 <form action="login.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
 <div class="form-group">
 <label>Email Address:</label>
 <input type="email" name="email" placeholder="example@gmail.com" required>
@@ -168,7 +171,7 @@ Find Nearby Hackathons & Coding Events
 
 <div class="signup-prompt">
 <p>Don't have an account?</p>
-<a href="Registerpage.html">Create a new account</a>
+<a href="Registerpage_view.php">Create a new account</a>
 </div>
 </main>
 

@@ -1,7 +1,8 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: admin_login.html");
+    header("Location: admin_login_view.php");
     exit();
 }
 require_once 'db_connect.php';
@@ -87,11 +88,15 @@ h2 { margin-top: 0; color: #333; border-bottom: 2px solid #8b5cf6; padding-botto
         <h3 style="margin-bottom:15px;">Final Administrative Action</h3>
         <p style="margin-bottom:20px; color:#666;">Approving or rejecting this application updates the hackathon status for everyone on this team.</p>
         <form action="admin_update_application.php" method="POST" style="display:inline-block; margin:0 10px;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <input type="hidden" name="status" value="Accepted">
             <input type="hidden" name="app_id" value="<?= $application['id'] ?>">
             <button type="submit" class="btn btn-success" style="font-size:1.1em; padding:12px 30px;">Accept Entire Team</button>
         </form>
         <form action="admin_update_application.php" method="POST" style="display:inline-block; margin:0 10px;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <input type="hidden" name="status" value="Rejected">
             <input type="hidden" name="app_id" value="<?= $application['id'] ?>">
             <button type="submit" class="btn btn-danger" style="font-size:1.1em; padding:12px 30px;">Reject Team Application</button>

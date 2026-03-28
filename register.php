@@ -1,6 +1,6 @@
 <?php
 // Start session (if needed later for login)
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 // Database connection
 require_once 'db_connect.php';
@@ -36,7 +36,7 @@ if (isset($_POST['register'])) {
         // Registration success → alert + redirect to login
         echo "<script>
         alert('Registration Successful! Please login.');
-        window.location.href='login.html';
+        window.location.href='login_view.php';
         </script>";
     } else {
         // If email already exists or other error

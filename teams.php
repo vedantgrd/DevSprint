@@ -1,7 +1,8 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login_view.php");
     exit();
 }
 require_once 'db_connect.php';
@@ -99,6 +100,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
     <div class="card">
         <h2>Create a Squad</h2>
         <form action="create_team.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <div class="form-group">
                 <label>Team Name</label>
                 <input type="text" name="team_name" required placeholder="e.g. Codebreakers">
@@ -117,6 +120,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                     <h4 style="margin:0 0 5px 0; color:#fff; font-size: 1.1em;"><?= htmlspecialchars($et['name']) ?></h4>
                     <p style="margin:0 0 8px 0; font-size:0.85em; color:#cbd5e1;">Leader: <?= htmlspecialchars($et['first_name'] . ' ' . $et['last_name']) ?></p>
                     <form action="team_action.php" method="POST" style="margin:0;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                         <input type="hidden" name="action" value="request_join">
                         <input type="hidden" name="team_id" value="<?= $et['id'] ?>">
                         <button type="submit" class="btn-primary" style="padding: 6px 12px; font-size: 0.85em; width:100%;">Request to Join</button>
@@ -141,11 +146,15 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                     </div>
                     <div style="display:flex; gap:10px;">
                         <form action="team_action.php" method="POST" style="margin:0;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                             <input type="hidden" name="action" value="accept_invite">
                             <input type="hidden" name="team_id" value="<?= $inv['team_id'] ?>">
                             <button type="submit" class="btn-primary" style="padding: 6px 15px; font-size: 0.9em; width:auto; margin:0;">Accept</button>
                         </form>
                         <form action="team_action.php" method="POST" style="margin:0;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                             <input type="hidden" name="action" value="decline_invite">
                             <input type="hidden" name="team_id" value="<?= $inv['team_id'] ?>">
                             <button type="submit" class="btn-primary" style="background:#ef4444; padding: 6px 15px; font-size: 0.9em; width:auto; margin:0;">Decline</button>
@@ -175,6 +184,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                     <?php if($team['leader_id'] == $user_id && !empty($hackathons_list)): ?>
                         <div style="background: rgba(255,255,255,0.05); padding:10px; border-radius:8px; border-top: 1px solid rgba(255,255,255,0.1); margin-top:5px;">
                             <form action="apply.php" method="POST" style="margin:0; display:flex; gap:10px;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                                 <input type="hidden" name="team_id" value="<?= $team['id'] ?>">
                                 <select name="hackathon_id" required style="padding:8px; border-radius:5px; background:#1e293b; color:white; border:1px solid #475569; flex:1;">
                                     <option value="">-- Apply this team to a Hackathon --</option>

@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +28,7 @@
                     <li><a href="profile.php">My Profile</a></li>
                     <li><a href="logout.php" class="nav-btn" style="background: #ef4444;">Logout</a></li>
                 <?php else: ?>
-                    <li><a href="login.html" class="nav-btn">Get Started</a></li>
+                    <li><a href="login_view.php" class="nav-btn">Get Started</a></li>
                 <?php endif; ?>
             </ul>
         </div>

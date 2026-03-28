@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once 'db_connect.php';
 
 // Fetch hackathons
@@ -37,7 +37,7 @@ body { background: #0a0e27; color: white; margin: 0; font-family: 'Inter', sans-
                 <li><a href="profile.php">My Profile</a></li>
                 <li><a href="logout.php" class="nav-btn" style="background: #ef4444;">Logout</a></li>
             <?php else: ?>
-                <li><a href="login.html" class="nav-btn">Get Started</a></li>
+                <li><a href="login_view.php" class="nav-btn">Get Started</a></li>
             <?php endif; ?>
         </ul>
     </div>

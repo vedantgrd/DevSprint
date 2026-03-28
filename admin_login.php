@@ -1,5 +1,6 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $_POST['username'];
     $pass = $_POST['password'];
@@ -35,6 +36,8 @@ body { background: #0a0e27; display: flex; justify-content: center; align-items:
     <h2>Admin Login</h2>
     <?php if(isset($error)) echo "<p style='color:#ef4444;text-align:center;'>$error</p>"; ?>
     <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
         <div class="form-group">
             <label>Username</label>
             <input type="text" name="username" required>

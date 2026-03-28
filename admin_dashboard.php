@@ -1,5 +1,6 @@
+<?php require_once 'csrf.php'; ?>
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['admin_logged_in'])) {
     header("Location: admin_login.php");
     exit();
@@ -57,6 +58,8 @@ th { color: #8b5cf6; }
     <div class="card">
         <h3>Add New Hackathon</h3>
         <form action="admin_add_hackathon.php" method="POST">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
             <div class="form-group"><label>Title</label><input type="text" name="title" required></div>
             <div class="form-group"><label>Location</label><input type="text" name="location" required></div>
             <div class="form-group"><label>Start Date</label><input type="date" name="date_start" required></div>
@@ -98,11 +101,15 @@ th { color: #8b5cf6; }
                             <a href="admin_view_team.php?app_id=<?= $a['id'] ?>" class="btn">View Team Details</a>
                         <?php else: ?>
                             <form action="admin_update_application.php" method="POST" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                                 <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
                                 <input type="hidden" name="status" value="Accepted">
                                 <button type="submit" style="background:#10b981; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;" title="Accept">✓</button>
                             </form>
                             <form action="admin_update_application.php" method="POST" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+
                                 <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
                                 <input type="hidden" name="status" value="Rejected">
                                 <button type="submit" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;" title="Reject">✕</button>

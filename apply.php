@@ -1,7 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('Please log in first to apply.'); window.location.href='login.html';</script>";
+    echo "<script>alert('Please log in first to apply.'); window.location.href='login_view.php';</script>";
     exit();
 }
 require_once 'db_connect.php';
