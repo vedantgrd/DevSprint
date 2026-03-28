@@ -11,10 +11,11 @@ $hackathons = $conn->query("SELECT * FROM hackathons ORDER BY created_at DESC");
 
 // Fetch Applications
 $apps_query = "
-    SELECT a.id, u.first_name, u.last_name, u.email, h.title, a.applied_at, a.status 
+    SELECT a.id, u.first_name, u.last_name, u.email, h.title, a.applied_at, a.status, t.name as team_name
     FROM applications a 
     JOIN users u ON a.user_id = u.id 
     JOIN hackathons h ON a.hackathon_id = h.id 
+    LEFT JOIN teams t ON a.team_id = t.id
     ORDER BY a.applied_at DESC
 ";
 $applications = $conn->query($apps_query);
@@ -62,6 +63,14 @@ th { color: #8b5cf6; }
             <div class="form-group"><label>End Date</label><input type="date" name="date_end" required></div>
             <div class="form-group"><label>Prize Pool</label><input type="text" name="prize_pool" required></div>
             <div class="form-group"><label>Description</label><textarea name="description" rows="4" required></textarea></div>
+            <div class="form-group">
+                <label>Application Type</label>
+                <select name="application_type" required>
+                    <option value="Both">Both (Individual or Team)</option>
+                    <option value="Individual">Individual Only</option>
+                    <option value="Team">Team Only</option>
+                </select>
+            </div>
             <button type="submit" class="btn" style="width: 100%;">Create Hackathon</button>
         </form>
     </div>
@@ -75,7 +84,7 @@ th { color: #8b5cf6; }
                 <tr><th>User</th><th>Email</th><th>Hackathon</th><th>Date</th><th>Status</th><th>Actions</th></tr>
                 <?php if($applications && $applications->num_rows > 0): while($a = $applications->fetch_assoc()): ?>
                 <tr>
-                    <td><?= htmlspecialchars($a['first_name'] . ' ' . $a['last_name']) ?></td>
+                    <td><?= htmlspecialchars($a['first_name'] . ' ' . $a['last_name']) ?><br><small style="color:#cbd5e1;"><?= htmlspecialchars($a['team_name']?'Team: '.$a['team_name']:'Individual') ?></small></td>
                     <td><?= htmlspecialchars($a['email']) ?></td>
                     <td><?= htmlspecialchars($a['title']) ?></td>
                     <td><?= date('M d, Y', strtotime($a['applied_at'])) ?></td>
@@ -85,7 +94,9 @@ th { color: #8b5cf6; }
                         </span>
                     </td>
                     <td>
-                        <?php if($a['status'] === 'Pending'): ?>
+                        <?php if($a['team_name']): ?>
+                            <a href="admin_view_team.php?app_id=<?= $a['id'] ?>" class="btn">View Team Details</a>
+                        <?php else: ?>
                             <form action="admin_update_application.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
                                 <input type="hidden" name="status" value="Accepted">

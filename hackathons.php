@@ -57,10 +57,7 @@ body { background: #0a0e27; color: white; margin: 0; font-family: 'Inter', sans-
                     <p style="margin-top: 15px; color: #94a3b8;"><?= htmlspecialchars($row['description']) ?></p>
                 </div>
                 <div class="hack-actions">
-                    <form action="apply.php" method="POST">
-                        <input type="hidden" name="hackathon_id" value="<?= $row['id'] ?>">
-                        <button type="submit" class="btn btn-primary">Apply Now</button>
-                    </form>
+                    <a href="apply_gateway.php?id=<?= $row['id'] ?>" class="btn btn-primary" style="display:inline-block; padding: 12px 24px;">Apply Options</a>
                 </div>
             </div>
         <?php endwhile; ?>

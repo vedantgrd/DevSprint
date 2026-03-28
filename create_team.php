@@ -8,13 +8,12 @@ require_once 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $team_name = trim($_POST['team_name']);
-    $hackathon_id = intval($_POST['hackathon_id']);
     $user_id = $_SESSION['user_id'];
 
-    if(!empty($team_name) && $hackathon_id > 0) {
+    if(!empty($team_name)) {
         // Insert team
-        $stmt = $conn->prepare("INSERT INTO teams (name, hackathon_id, leader_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("sii", $team_name, $hackathon_id, $user_id);
+        $stmt = $conn->prepare("INSERT INTO teams (name, leader_id) VALUES (?, ?)");
+        $stmt->bind_param("si", $team_name, $user_id);
         
         if ($stmt->execute()) {
             $team_id = $stmt->insert_id;

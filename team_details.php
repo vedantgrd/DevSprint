@@ -15,7 +15,7 @@ if ($team_id <= 0) {
 }
 
 // Get team details
-$stmt = $conn->prepare("SELECT t.*, h.title as hackathon FROM teams t JOIN hackathons h ON t.hackathon_id = h.id WHERE t.id = ?");
+$stmt = $conn->prepare("SELECT * FROM teams WHERE id = ?");
 $stmt->bind_param("i", $team_id);
 $stmt->execute();
 $team = $stmt->get_result()->fetch_assoc();
@@ -93,7 +93,6 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
     <div class="card">
         <a href="teams.php" style="color:#cbd5e1; text-decoration:none; font-size:0.9rem;">&larr; Back to Teams</a>
         <h2 style="margin-top:15px;"><?= htmlspecialchars($team['name']) ?></h2>
-        <p class="subtitle">Hackathon: <strong><?= htmlspecialchars($team['hackathon']) ?></strong></p>
 
         <?php if(!$is_member): ?>
             <div style="text-align:center; margin-bottom: 30px;">
@@ -135,6 +134,24 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
                 </li>
             <?php endforeach; ?>
         </ul>
+
+        <?php if($is_leader): ?>
+        <div style="margin-top:30px; padding-top:20px; border-top:1px solid rgba(139, 92, 246, 0.3);">
+            <h3>Team Settings (Leader Only)</h3>
+            <form action="team_action.php" method="POST" style="margin-bottom:15px; display:flex; gap:10px;">
+                <input type="hidden" name="action" value="update_team">
+                <input type="hidden" name="team_id" value="<?=$team['id']?>">
+                <input type="text" name="team_name" value="<?=htmlspecialchars($team['name'])?>" required style="padding:10px; border-radius:5px; border:1px solid #475569; background:#1e293b; color:white; flex:1;">
+                <button type="submit" class="btn" style="border-radius:5px;">Update Name</button>
+            </form>
+            <form action="team_action.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this team entirely? This will remove all members and applications tied to it.');">
+                <input type="hidden" name="action" value="delete_team">
+                <input type="hidden" name="team_id" value="<?=$team['id']?>">
+                <button type="submit" class="btn btn-danger" style="border-radius:5px;">Delete Team Entirely</button>
+            </form>
+        </div>
+        <?php endif; ?>
+
     </div>
 </div>
 </body>

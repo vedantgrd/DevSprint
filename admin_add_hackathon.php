@@ -13,9 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date_end = $_POST['date_end'];
     $prize_pool = $_POST['prize_pool'];
     $description = $_POST['description'];
+    $application_type = $_POST['application_type'];
 
-    $stmt = $conn->prepare("INSERT INTO hackathons (title, location, date_start, date_end, prize_pool, description) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssss", $title, $location, $date_start, $date_end, $prize_pool, $description);
+    $stmt = $conn->prepare("INSERT INTO hackathons (title, location, date_start, date_end, prize_pool, description, application_type) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssss", $title, $location, $date_start, $date_end, $prize_pool, $description, $application_type);
 
     if ($stmt->execute()) {
         echo "<script>alert('Hackathon added successfully!'); window.location.href='admin_dashboard.php';</script>";

@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $check->bind_param("ii", $team_id, $user_id);
         $check->execute();
         if ($check->get_result()->num_rows > 0) {
-            $stmt = $conn->prepare("INSERT INTO team_members (team_id, user_id, status) VALUES (?, ?, 'Pending')");
+            $stmt = $conn->prepare("INSERT INTO team_members (team_id, user_id, status) VALUES (?, ?, 'Invited')");
             $stmt->bind_param("ii", $team_id, $target_user);
             if ($stmt->execute()) {
                 echo "<script>alert('Invite sent!'); window.history.back();</script>";
@@ -58,6 +58,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
         $check->close();
+    } elseif ($action === 'accept_invite' || $action === 'decline_invite') {
+        if ($action === 'accept_invite') {
+            $stmt = $conn->prepare("UPDATE team_members SET status = 'Accepted' WHERE team_id = ? AND user_id = ? AND status = 'Invited'");
+        } else {
+            $stmt = $conn->prepare("DELETE FROM team_members WHERE team_id = ? AND user_id = ? AND status = 'Invited'");
+        }
+        $stmt->bind_param("ii", $team_id, $user_id);
+        $stmt->execute();
+        $stmt->close();
+        header("Location: teams.php");
+        exit();
+    } elseif ($action === 'update_team') {
+        $team_name = trim($_POST['team_name']);
+        if (!empty($team_name)) {
+            $stmt = $conn->prepare("UPDATE teams SET name = ? WHERE id = ? AND leader_id = ?");
+            $stmt->bind_param("sii", $team_name, $team_id, $user_id);
+            if ($stmt->execute()) {
+                echo "<script>alert('Team updated!'); window.location.href='team_details.php?id=$team_id';</script>";
+            } else {
+                echo "<script>alert('Error updating.'); window.history.back();</script>";
+            }
+            $stmt->close();
+        }
+    } elseif ($action === 'delete_team') {
+        $stmt = $conn->prepare("DELETE FROM teams WHERE id = ? AND leader_id = ?");
+        $stmt->bind_param("ii", $team_id, $user_id);
+        if ($stmt->execute()) {
+            echo "<script>alert('Team deleted completely.'); window.location.href='teams.php';</script>";
+        } else {
+            echo "<script>alert('Error deleting team.'); window.history.back();</script>";
+        }
+        $stmt->close();
     }
 }
 $conn->close();
