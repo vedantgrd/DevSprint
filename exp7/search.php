@@ -15,11 +15,8 @@ if ($q !== "") {
         $stmt->execute();
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
-            if ($hint === "") {
-                $hint = htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8');
-            } else {
-                $hint .= ", " . htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8');
-            }
+            $productName = htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8');
+            $hint .= "<div class='result-item' onclick='selectProduct(\"" . $productName . "\")'>" . $productName . "</div>";
         }
         $stmt->close();
     }

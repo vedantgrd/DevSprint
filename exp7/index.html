@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AJAX Search</title>
+    <title>Search</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Search for Products</h1>
-    <form>
-        <label for="search">Type to search:</label>
-        <input type="text" id="search" name="search" onkeyup="showResult(this.value)">
-    </form>
-    <div id="results"></div>
+    <div class="search-container">
+        <h1 class="search-title">Product Search</h1>
+        <form action="javascript:void(0);">
+            <div class="search-bar">
+                <input type="text" id="search" name="search" onkeyup="showResult(this.value)" autocomplete="off">
+            </div>
+        </form>
+        <div id="results-container">
+            <div id="results"></div>
+        </div>
+    </div>
 
     <script>
     function showResult(str) {
@@ -26,6 +32,10 @@
             .then(data => {
                 document.getElementById("results").innerHTML = data;
             });
+    }
+
+    function selectProduct(productName) {
+        alert("You have selected: " + productName);
     }
     </script>
 
