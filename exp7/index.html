@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Search</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Search for Products</h1>
+    <form>
+        <label for="search">Type to search:</label>
+        <input type="text" id="search" name="search" onkeyup="showResult(this.value)">
+    </form>
+    <div id="results"></div>
+
+    <script>
+    function showResult(str) {
+        if (str.length == 0) {
+            document.getElementById("results").innerHTML = "";
+            return;
+        }
+        fetch("search.php?q=" + str)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("results").innerHTML = data;
+            });
+    }
+    </script>
+
+</body>
+</html>
