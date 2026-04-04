@@ -140,7 +140,7 @@
                 <div class="channel-icon">📍</div>
                 <div>
                     <div class="channel-label">Location</div>
-                    <div class="channel-value">MES College of Engineering, Pune</div>
+                    <div class="channel-value">Pillai College of Engineering, New Panvel</div>
                 </div>
             </div>
             <div class="contact-channel">

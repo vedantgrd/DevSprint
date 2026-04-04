@@ -180,43 +180,57 @@
 .tech-badge-dot.orange { background:var(--nova-orange); }
 
 /* ── Timeline / roadmap ── */
-.roadmap-list { list-style:none;padding:0;margin-top:2rem;position:relative; }
+.roadmap-list { list-style:none; padding:0; margin-top:2rem; position:relative; }
 .roadmap-list::before {
-    content:'';position:absolute;top:0;bottom:0;left:1.1rem;
-    width:1px;background:linear-gradient(to bottom,var(--plasma-cyan),transparent);
+    content:'';
+    position:absolute;
+    top:0; bottom:0;
+    left:0.68rem;           /* ← centres the line behind the 1.4rem dot */
+    width:1px;
+    background:linear-gradient(to bottom, var(--plasma-cyan), transparent);
 }
 .roadmap-item {
-    display:flex;gap:1.5rem;padding:0 0 2.2rem 0;position:relative;
+    display:flex;
+    gap:1.5rem;
+    padding:0 0 2.2rem 0;
+    position:relative;
+    align-items:flex-start;  /* ← keeps dot top-aligned with content */
 }
 .roadmap-dot {
-    flex-shrink:0;width:1.4rem;height:1.4rem;border-radius:50%;
-    background:rgba(0,229,255,0.1);border:1px solid var(--plasma-cyan);
-    display:flex;align-items:center;justify-content:center;
-    margin-top:0.15rem;position:relative;z-index:1;
+    flex-shrink:0;
+    width:1.4rem; height:1.4rem;
+    border-radius:50%;
+    background:rgba(0,229,255,0.1);
+    border:1px solid var(--plasma-cyan);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    z-index:1;               /* ← sits above the ::before line */
+    margin-top:0.1rem;
 }
 .roadmap-dot::before {
-    content:'';width:6px;height:6px;border-radius:50%;
+    content:'';
+    width:6px; height:6px;
+    border-radius:50%;
     background:var(--plasma-cyan);
 }
 .roadmap-dot.done::before { background:var(--comet-green); }
-.roadmap-dot.done { border-color:var(--comet-green);background:rgba(0,230,118,0.1); }
+.roadmap-dot.done { border-color:var(--comet-green); background:rgba(0,230,118,0.1); }
 .roadmap-dot.upcoming::before { background:var(--pulsar-violet); }
-.roadmap-dot.upcoming { border-color:var(--pulsar-violet);background:rgba(124,77,255,0.1); }
+.roadmap-dot.upcoming { border-color:var(--pulsar-violet); background:rgba(124,77,255,0.1); }
 .roadmap-content h4 {
-    font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;
-    color:var(--text-bright);margin-bottom:0.3rem;
+    font-family:'Orbitron',monospace; font-size:0.85rem; font-weight:700;
+    color:var(--text-bright); margin-bottom:0.3rem;
 }
-.roadmap-content p { color:var(--text-dim);font-size:0.85rem;line-height:1.6; }
+.roadmap-content p { color:var(--text-dim); font-size:0.85rem; line-height:1.6; }
 .roadmap-tag {
-    display:inline-block;padding:0.15rem 0.6rem;border-radius:4px;
-    font-family:'JetBrains Mono',monospace;font-size:0.68rem;
-    font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    display:inline-block; padding:0.15rem 0.6rem; border-radius:4px;
+    font-family:'JetBrains Mono',monospace; font-size:0.68rem;
+    font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
     margin-bottom:0.5rem;
 }
-.roadmap-tag.live { background:rgba(0,230,118,0.12);color:var(--comet-green); }
-.roadmap-tag.beta { background:rgba(79,195,247,0.12);color:var(--plasma-cyan); }
-.roadmap-tag.soon { background:rgba(124,77,255,0.12);color:var(--pulsar-violet); }
-
+.roadmap-tag.live  { background:rgba(0,230,118,0.12); color:var(--comet-green); }
+.roadmap-tag.beta  { background:rgba(79,195,247,0.12); color:var(--plasma-cyan); }
+.roadmap-tag.soon  { background:rgba(124,77,255,0.12); color:var(--pulsar-violet); }
 /* ── Capability list ── */
 .box-legend-list { list-style:none;padding:0; }
 .box-legend-list li {
