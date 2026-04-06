@@ -1,4 +1,7 @@
-<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+<?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once 'csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,6 +64,44 @@
 .contact-submit:hover { transform:translateY(-2px);box-shadow:0 0 30px rgba(0,229,255,0.25); }
 .contact-submit span { position:relative;z-index:1; }
 
+/* Login gate banner */
+.login-gate {
+    background: rgba(124,77,255,0.08);
+    border: 1px solid rgba(124,77,255,0.3);
+    border-radius: var(--radius-md);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.login-gate p {
+    color: var(--text-mid);
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+.login-gate a {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, var(--plasma-cyan), var(--pulsar-violet));
+    color: var(--void);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.login-gate a:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0,229,255,0.25); }
+
+/* Readonly email field */
+input[readonly] {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: rgba(255,255,255,0.01) !important;
+    border-color: rgba(79,195,247,0.08) !important;
+}
+
 /* Team roster table */
 .roster-section { max-width:1100px;margin:0 auto;padding:0 2rem 5rem; }
 .roster-table-wrap { overflow-x:auto;border-radius:var(--radius-md);border:1px solid rgba(79,195,247,0.1); }
@@ -69,6 +110,12 @@
 .toast-success {
     background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);
     color:var(--comet-green);padding:1rem 1.5rem;border-radius:var(--radius-md);
+    font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:1.5rem;
+    display:none;
+}
+.toast-error {
+    background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);
+    color:#ef4444;padding:1rem 1.5rem;border-radius:var(--radius-md);
     font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:1.5rem;
     display:none;
 }
@@ -168,26 +215,91 @@
     <!-- Right: Form -->
     <div class="contact-form-card reveal-right">
         <div class="contact-form-title">📡 Send a Transmission</div>
-        <div class="toast-success" id="toast">✅ Message transmitted successfully! We'll respond soon.</div>
-        <form id="contactForm">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="cf-name" placeholder="Your name" required>
+
+        <?php if (!isset($_SESSION['user_id'])): ?>
+            <!-- NOT LOGGED IN: show gate -->
+            <div class="login-gate">
+                <p>🔐 You must be <strong style="color:var(--plasma-cyan);">logged in</strong> to transmit a message to mission control.<br>Create a free account or sign in to continue.</p>
+                <a href="login_view.php?redirect=contact.php">⚡ LOGIN TO TRANSMIT</a>
             </div>
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="cf-email" placeholder="commander@example.com" required>
+            <!-- Disabled/preview form -->
+            <form id="contactForm" style="opacity:0.4;pointer-events:none;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Your name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="commander@example.com" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" placeholder="e.g. Partnership inquiry, Bug report, Feedback..." disabled>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="5" placeholder="Write your message here..." disabled></textarea>
+                </div>
+                <button type="button" class="contact-submit" disabled><span>📨 TRANSMIT MESSAGE</span></button>
+            </form>
+
+        <?php else:
+            // Fetch user email from DB if not fully in session
+            require_once 'db_connect.php';
+            $u_stmt = $conn->prepare("SELECT first_name, last_name, email FROM users WHERE id = ?");
+            $u_stmt->bind_param("i", $_SESSION['user_id']);
+            $u_stmt->execute();
+            $u_res = $u_stmt->get_result();
+            $user_data = $u_res->fetch_assoc();
+            $u_stmt->close();
+            $user_full_name = htmlspecialchars(($user_data['first_name'] ?? '') . ' ' . ($user_data['last_name'] ?? ''));
+            $user_email     = htmlspecialchars($user_data['email'] ?? '');
+        ?>
+
+            <!-- SUCCESS TOAST -->
+            <div class="toast-success" id="toast-success">
+                <?php if (isset($_SESSION['contact_success']) && $_SESSION['contact_success']): ?>
+                    ✅ Message transmitted successfully! Mission control will respond soon.
+                <?php endif; ?>
             </div>
-            <div class="form-group">
-                <label>Subject</label>
-                <input type="text" id="cf-subject" placeholder="e.g. Partnership inquiry, Bug report, Feedback...">
+
+            <!-- ERROR TOAST -->
+            <div class="toast-error" id="toast-error">
+                <?php if (isset($_SESSION['contact_error'])): ?>
+                    ⚠️ <?= htmlspecialchars($_SESSION['contact_error']) ?>
+                <?php endif; ?>
             </div>
-            <div class="form-group">
-                <label>Message</label>
-                <textarea id="cf-message" rows="5" placeholder="Write your message here..." required></textarea>
-            </div>
-            <button type="submit" class="contact-submit"><span>📨 TRANSMIT MESSAGE</span></button>
-        </form>
+
+            <?php
+                // Clear flash messages after reading
+                unset($_SESSION['contact_success'], $_SESSION['contact_error']);
+            ?>
+
+            <form id="contactForm" action="send_message.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" id="cf-name" value="<?= $user_full_name ?>" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-dim);letter-spacing:0.1em;">(auto-filled · cannot be changed)</span></label>
+                    <input type="email" name="email" id="cf-email"
+                           value="<?= $user_email ?>"
+                           readonly
+                           title="Your registered email address. This cannot be changed.">
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" name="subject" id="cf-subject" placeholder="e.g. Partnership inquiry, Bug report, Feedback...">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="message" id="cf-message" rows="5" placeholder="Write your message here..." required></textarea>
+                </div>
+                <button type="submit" class="contact-submit"><span>📨 TRANSMIT MESSAGE</span></button>
+            </form>
+
+        <?php endif; ?>
     </div>
 </div>
 
@@ -261,17 +373,27 @@
 
 <script src="script.js"></script>
 <script>
-// Contact form client-side feedback (no backend yet — shows success toast)
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const name = document.getElementById('cf-name').value.trim();
-    const email = document.getElementById('cf-email').value.trim();
-    const msg = document.getElementById('cf-message').value.trim();
-    if (!name || !email || !msg) return;
-    const toast = document.getElementById('toast');
-    toast.style.display = 'block';
-    this.reset();
-    setTimeout(() => { toast.style.display = 'none'; }, 5000);
+// Show flash toasts if set
+document.addEventListener('DOMContentLoaded', function() {
+    const successToast = document.getElementById('toast-success');
+    const errorToast   = document.getElementById('toast-error');
+
+    if (successToast && successToast.textContent.trim().length > 5) {
+        successToast.style.display = 'block';
+        setTimeout(() => { successToast.style.display = 'none'; }, 6000);
+    }
+    if (errorToast && errorToast.textContent.trim().length > 5) {
+        errorToast.style.display = 'block';
+        setTimeout(() => { errorToast.style.display = 'none'; }, 6000);
+    }
+
+    // Prevent the email field from being changed even via JS tricks
+    const emailField = document.getElementById('cf-email');
+    if (emailField) {
+        const lockedValue = emailField.value;
+        emailField.addEventListener('input', function() { this.value = lockedValue; });
+        emailField.addEventListener('change', function() { this.value = lockedValue; });
+    }
 });
 </script>
 </body>

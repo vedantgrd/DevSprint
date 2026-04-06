@@ -19,10 +19,11 @@ $apps_query = "
 ";
 $applications = $conn->query($apps_query);
 
-$total_users = $conn->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'] ?? 0;
-$total_hack  = $conn->query("SELECT COUNT(*) as c FROM hackathons")->fetch_assoc()['c'] ?? 0;
-$total_apps  = $conn->query("SELECT COUNT(*) as c FROM applications")->fetch_assoc()['c'] ?? 0;
-$total_teams = $conn->query("SELECT COUNT(*) as c FROM teams")->fetch_assoc()['c'] ?? 0;
+$total_users   = $conn->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'] ?? 0;
+$total_hack    = $conn->query("SELECT COUNT(*) as c FROM hackathons")->fetch_assoc()['c'] ?? 0;
+$total_apps    = $conn->query("SELECT COUNT(*) as c FROM applications")->fetch_assoc()['c'] ?? 0;
+$total_teams   = $conn->query("SELECT COUNT(*) as c FROM teams")->fetch_assoc()['c'] ?? 0;
+$unread_msgs   = $conn->query("SELECT COUNT(*) as c FROM messages WHERE message_type='contact' AND is_read=0")->fetch_assoc()['c'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -122,6 +123,16 @@ body {
     margin-bottom: 2rem;
     display: inline-block;
     background: rgba(255, 109, 0, 0.06);
+}
+
+.sidebar-badge {
+    margin-left: auto;
+    background: rgba(255, 61, 87, 0.2);
+    color: #ff3d57;
+    border: 1px solid rgba(255, 61, 87, 0.4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; font-weight: 700;
+    padding: 0.1rem 0.5rem; border-radius: 40px;
 }
 
 .sidebar-section {
@@ -554,6 +565,12 @@ body {
     </a>
     <a href="#hack-section" class="sidebar-link">
         <span class="link-icon">🏆</span> All Hackathons
+    </a>
+    <a href="admin_messages.php" class="sidebar-link">
+        <span class="link-icon">📨</span> Messages
+        <?php if ($unread_msgs > 0): ?>
+            <span class="sidebar-badge"><?= $unread_msgs ?></span>
+        <?php endif; ?>
     </a>
 
     <div class="sidebar-logout">

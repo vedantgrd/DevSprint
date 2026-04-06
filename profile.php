@@ -42,6 +42,7 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Your DevSprint commander profile — manage your details, skills, and applications.">
 <title>My Profile | DevSprint · Commander Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,24 +50,171 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: white; }
-.profile-container { max-width: 1000px; margin: 40px auto; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-.card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 20px; padding: 30px; }
-.card h2 { color: #fff; margin-bottom: 20px; border-bottom: 2px solid rgba(139, 92, 246, 0.3); padding-bottom: 10px; }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 5px; color: #cbd5e1; font-weight: 500;}
-.form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; }
-.btn-save { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1rem; }
-.app-item { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #8b5cf6; }
-.app-item h4 { margin: 0 0 5px 0; color: #ec4899; }
-.app-item p { margin: 0; font-size: 0.9em; color: #cbd5e1; }
-.status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin-top: 8px; }
-.status.Pending { background: #f59e0b; color: #fff; }
-.status.Accepted { background: #10b981; color: #fff; }
-.status.Rejected { background: #ef4444; color: #fff; }
+/* ── Profile Layout ── */
+.profile-layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
 
-@media (max-width: 768px) {
-    .profile-container { grid-template-columns: 1fr; }
+/* ── Commander Banner ── */
+.commander-banner {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(79,195,247,0.15);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.commander-banner::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--plasma-cyan), var(--pulsar-violet), var(--nova-orange));
+}
+.commander-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--plasma-cyan), var(--pulsar-violet));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 900;
+    color: var(--void); flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(0,229,255,0.3);
+}
+.commander-info { flex: 1; }
+.commander-name {
+    font-family: 'Orbitron', monospace; font-size: 1.6rem;
+    font-weight: 900; color: var(--text-bright); margin-bottom: 0.35rem;
+}
+.commander-email {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+    color: var(--plasma-cyan); margin-bottom: 1rem; letter-spacing: 0.05em;
+}
+.skills-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-tag {
+    padding: 0.25rem 0.75rem;
+    background: rgba(124,77,255,0.12);
+    border: 1px solid rgba(124,77,255,0.3);
+    border-radius: 40px;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--pulsar-violet);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+}
+.commander-actions { display: flex; flex-direction: column; gap: 0.6rem; flex-shrink: 0; }
+
+/* ── Two-column grid for cards ── */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+}
+
+/* ── Profile Cards ── */
+.p-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(79,195,247,0.12);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.p-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--plasma-cyan), var(--pulsar-violet));
+}
+.p-card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem; font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(79,195,247,0.08);
+    display: flex; align-items: center; gap: 0.5rem;
+    letter-spacing: 0.04em;
+}
+.card-icon { font-size: 1.1rem; }
+
+/* ── Save Button ── */
+.save-btn {
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg, var(--plasma-cyan), var(--pulsar-violet));
+    color: var(--void); border: none; border-radius: var(--radius-sm);
+    font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.08em; cursor: pointer; transition: all 0.3s;
+    margin-top: 0.5rem; position: relative; overflow: hidden;
+}
+.save-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--pulsar-violet), var(--plasma-cyan));
+    opacity: 0; transition: opacity 0.3s;
+}
+.save-btn:hover::before { opacity: 1; }
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,229,255,0.25); }
+.save-btn span { position: relative; z-index: 1; }
+
+/* ── Application items ── */
+.app-item {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(79,195,247,0.08);
+    border-left: 3px solid var(--pulsar-violet);
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.85rem;
+    transition: border-color 0.3s;
+}
+.app-item:hover { border-color: rgba(124,77,255,0.4); }
+.app-item h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--plasma-cyan); margin-bottom: 0.4rem; letter-spacing: 0.03em;
+}
+.app-item p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.25rem;
+}
+
+/* ── GitHub card ── */
+.gh-meta { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; }
+.gh-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(79,195,247,0.3); }
+.gh-name { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.35rem; }
+.gh-stats { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-dim); }
+.repo-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(79,195,247,0.1);
+    border-radius: var(--radius-md); padding: 1rem;
+    transition: border-color 0.3s;
+}
+.repo-card:hover { border-color: rgba(79,195,247,0.3); }
+.repo-name { font-family: 'Orbitron', monospace; font-size: 0.82rem; font-weight: 700; color: var(--plasma-cyan); text-decoration: none; display: block; margin-bottom: 0.4rem; }
+.repo-name:hover { color: var(--pulsar-violet); }
+.repo-desc { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; line-height: 1.5; }
+.repo-lang { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--pulsar-violet); }
+
+/* ── Alert flash ── */
+.profile-alert {
+    padding: 1rem 1.5rem; border-radius: var(--radius-md);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+.profile-alert.success { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); color: var(--comet-green); }
+.profile-alert.error   { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.3);  color: #ef4444; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .profile-grid { grid-template-columns: 1fr; }
+    .commander-banner { flex-direction: column; text-align: center; }
+    .commander-actions { flex-direction: row; justify-content: center; }
+    .skills-cloud { justify-content: center; }
+}
+@media (max-width: 600px) {
+    .commander-name { font-size: 1.3rem; }
+    .p-card { padding: 1.5rem; }
 }
 </style>
 </head>
@@ -90,8 +238,9 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
         <ul class="nav-menu" id="nav-menu">
             <li><a href="index.php">Home</a></li>
             <li><a href="hackathons.php">Hackathons</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="contact.php">Contact</a></li>
             <li><a href="matchmaking.php">Find Teammates</a></li>
-            <li><a href="teams.php">My Teams</a></li>
             <li><a href="profile.php" class="active">My Profile</a></li>
             <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
         </ul>
@@ -131,55 +280,70 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
             </div>
         </div>
 
-        <!-- Update Profile -->
-        <div class="p-card reveal d1">
-            <div class="p-card-title"><span class="card-icon">🛸</span> Update Commander Profile</div>
-            <form action="update_profile.php" method="POST">
-                <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
-                <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
-                <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
-                <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
-                <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']??'') ?>"></div>
-                <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']??'') ?>"></div>
+        <!-- Two-column grid -->
+        <div class="profile-grid">
 
-                <div class="p-card-title" style="margin-top:1.5rem;font-size:0.85rem;"><span class="card-icon">🔭</span> Developer Info</div>
-                <div class="form-group"><label>Skills (comma separated)</label><input type="text" name="skills" value="<?= htmlspecialchars($user['skills']??'') ?>" placeholder="e.g. React, Python, UI/UX"></div>
-                <div class="form-group"><label>GitHub URL</label><input type="text" name="github" value="<?= htmlspecialchars($user['github']??'') ?>" placeholder="https://github.com/username"></div>
-                <div class="form-group"><label>LinkedIn URL</label><input type="text" name="linkedin" value="<?= htmlspecialchars($user['linkedin']??'') ?>" placeholder="https://linkedin.com/in/username"></div>
-                <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" placeholder="Tell the universe about yourself..."><?= htmlspecialchars($user['bio']??'') ?></textarea></div>
+            <!-- Update Profile Card -->
+            <div class="p-card reveal d1">
+                <div class="p-card-title"><span class="card-icon">🛸</span> Update Commander Profile</div>
 
-                <button type="submit" class="save-btn"><span>💾 SAVE CHANGES</span></button>
-            </form>
-        </div>
+                <?php if (isset($_SESSION['profile_success'])): ?>
+                    <div class="profile-alert success">✅ <?= htmlspecialchars($_SESSION['profile_success']) ?></div>
+                    <?php unset($_SESSION['profile_success']); ?>
+                <?php elseif (isset($_SESSION['profile_error'])): ?>
+                    <div class="profile-alert error">⚠️ <?= htmlspecialchars($_SESSION['profile_error']) ?></div>
+                    <?php unset($_SESSION['profile_error']); ?>
+                <?php endif; ?>
 
-        <!-- My Applications -->
-        <div class="p-card reveal d2">
-            <div class="p-card-title"><span class="card-icon">🏆</span> My Applications</div>
-            <?php if ($applications && $applications->num_rows > 0): ?>
-                <?php while($app = $applications->fetch_assoc()): ?>
-                    <div class="app-item">
-                        <h4><?= htmlspecialchars($app['title']) ?></h4>
-                        <p>📅 Starts: <?= htmlspecialchars($app['date_start']) ?></p>
-                        <p>⏰ Applied: <?= date('M d, Y', strtotime($app['applied_at'])) ?></p>
-                        <?php
-                        $st = htmlspecialchars($app['status']);
-                        $badgeClass = $st === 'Accepted' ? 'badge-accepted' : ($st === 'Rejected' ? 'badge-rejected' : 'badge-pending');
-                        ?>
-                        <span class="badge <?= $badgeClass ?>" style="margin-top:0.5rem;"><?= $st ?></span>
+                <form action="update_profile.php" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                    <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
+                    <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
+                    <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
+                    <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']??'') ?>"></div>
+                    <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']??'') ?>"></div>
+
+                    <div class="p-card-title" style="margin-top:1.5rem;font-size:0.8rem;border-bottom:none;padding-bottom:0;margin-bottom:1rem;">
+                        <span class="card-icon">🔭</span> Developer Info
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div style="text-align:center;padding:2rem 0;">
-                    <div style="font-size:2.5rem;opacity:0.4;margin-bottom:1rem;">🚀</div>
-                    <p style="color:var(--text-dim);font-size:0.9rem;">You haven't applied to any missions yet.</p>
-                    <a href="hackathons.php" class="btn btn-primary" style="margin-top:1rem;font-size:0.82rem;padding:0.7rem 1.5rem;"><span>Explore Hackathons</span></a>
-                </div>
-            <?php endif; ?>
+                    <div class="form-group"><label>Skills <span style="font-size:0.7rem;opacity:0.6;">(comma separated)</span></label><input type="text" name="skills" value="<?= htmlspecialchars($user['skills']??'') ?>" placeholder="e.g. React, Python, UI/UX"></div>
+                    <div class="form-group"><label>GitHub URL</label><input type="text" name="github" value="<?= htmlspecialchars($user['github']??'') ?>" placeholder="https://github.com/username"></div>
+                    <div class="form-group"><label>LinkedIn URL</label><input type="text" name="linkedin" value="<?= htmlspecialchars($user['linkedin']??'') ?>" placeholder="https://linkedin.com/in/username"></div>
+                    <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" placeholder="Tell the universe about yourself..."><?= htmlspecialchars($user['bio']??'') ?></textarea></div>
+
+                    <button type="submit" class="save-btn"><span>💾 SAVE CHANGES</span></button>
+                </form>
+            </div>
+
+            <!-- My Applications Card -->
+            <div class="p-card reveal d2">
+                <div class="p-card-title"><span class="card-icon">🏆</span> My Applications</div>
+                <?php if ($applications && $applications->num_rows > 0): ?>
+                    <?php while($app = $applications->fetch_assoc()): ?>
+                        <div class="app-item">
+                            <h4><?= htmlspecialchars($app['title']) ?></h4>
+                            <p>📅 Starts: <?= htmlspecialchars($app['date_start']) ?></p>
+                            <p>⏰ Applied: <?= date('M d, Y', strtotime($app['applied_at'])) ?></p>
+                            <?php
+                                $st = htmlspecialchars($app['status']);
+                                $badgeClass = $st === 'Accepted' ? 'badge-accepted' : ($st === 'Rejected' ? 'badge-rejected' : 'badge-pending');
+                            ?>
+                            <span class="badge <?= $badgeClass ?>" style="margin-top:0.5rem;"><?= $st ?></span>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div style="text-align:center;padding:3rem 0;">
+                        <div style="font-size:2.5rem;opacity:0.4;margin-bottom:1rem;">🚀</div>
+                        <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1.5rem;">You haven't applied to any missions yet.</p>
+                        <a href="hackathons.php" class="btn btn-primary btn-sm"><span>Explore Hackathons</span></a>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
 
-        <!-- GitHub Activity -->
+        <!-- GitHub Activity (full width) -->
         <?php if ($github_username): ?>
-        <div class="p-card reveal d3" id="github-card" style="grid-column:1/-1;">
+        <div class="p-card reveal d3" id="github-card">
             <div class="p-card-title"><span class="card-icon">🐙</span> GitHub Activity — <?= htmlspecialchars($github_username) ?></div>
             <div id="github-spinner" style="color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:0.85rem;">
                 ⏳ Syncing with GitHub orbital data...
@@ -235,8 +399,8 @@ body { margin:0; font-family:'Inter', sans-serif; background: #0a0e27; color: wh
         </script>
         <?php endif; ?>
 
-    </div>
-</div>
+    </div><!-- end profile-layout -->
+</div><!-- end page-wrapper -->
 
 <!-- FOOTER -->
 <footer>
