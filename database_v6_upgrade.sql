@@ -1,0 +1,3 @@
+ALTER TABLE hackathons
+ADD COLUMN latitude DECIMAL(10, 8) NULL,
+ADD COLUMN longitude DECIMAL(11, 8) NULL;

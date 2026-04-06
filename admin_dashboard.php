@@ -33,6 +33,9 @@ $total_teams = $conn->query("SELECT COUNT(*) as c FROM teams")->fetch_assoc()['c
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Leaflet.js Maps -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
 /* ── Reset & Base ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -609,8 +612,15 @@ body {
                     <input type="text" name="title" required placeholder="e.g. CodeFest 2026">
                 </div>
                 <div class="form-group">
-                    <label>Location</label>
+                    <label>Location Name</label>
                     <input type="text" name="location" required placeholder="e.g. Bangalore / Online">
+                </div>
+                <div class="form-group">
+                    <label>Pin Location on Map (Optional for Virtual events)</label>
+                    <div id="adminMap" style="height: 250px; border-radius: 6px; border: 1px solid rgba(79, 195, 247, 0.15);"></div>
+                    <input type="hidden" name="latitude" id="latInput">
+                    <input type="hidden" name="longitude" id="lngInput">
+                    <small style="color: #00e5ff; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; margin-top: 5px; display: block;">Click on the map to drop a coordinate pin.</small>
                 </div>
                 <div class="form-group">
                     <label>Start Date</label>
@@ -768,6 +778,29 @@ document.querySelectorAll('.sidebar-link[href^="#"]').forEach(function(link) {
         e.preventDefault();
         var target = document.querySelector(this.getAttribute('href'));
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+
+// Admin Map integration
+document.addEventListener('DOMContentLoaded', () => {
+    // Default location (e.g. center of India)
+    var map = L.map('adminMap').setView([20.5937, 78.9629], 4);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    var marker;
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        if(marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lng]).addTo(map);
+        document.getElementById('latInput').value = lat;
+        document.getElementById('lngInput').value = lng;
     });
 });
 </script>

@@ -16,6 +16,9 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Leaflet.js Maps -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 /* ── Hackathon Grid ── */
@@ -171,12 +174,21 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
             <button class="filter-chip" onclick="filterCards('individual',this)">Individual</button>
             <button class="filter-chip" onclick="filterCards('team',this)">Team Only</button>
             <button class="filter-chip" onclick="filterCards('both',this)">Open Format</button>
+            <button class="filter-chip" onclick="findNearMe()" id="btnNearMe" style="color:var(--plasma-cyan); border-color:var(--plasma-cyan);">📍 Near Me</button>
+            
+            <span style="margin-left:auto;">View:</span>
+            <button class="filter-chip active" id="btnGridView" onclick="toggleView('grid')">Grid</button>
+            <button class="filter-chip" id="btnMapView" onclick="toggleView('map')">Map</button>
+        </div>
+
+        <div id="mapContainer" style="display:none; height:600px; width:100%; border-radius: var(--radius-lg); border: 1px solid rgba(79,195,247,0.2); overflow:hidden; margin-top:20px; z-index:10;">
+            <div id="hackMap" style="height:100%; width:100%;"></div>
         </div>
 
         <div class="hack-grid" id="hackGrid">
             <?php if ($result && $result->num_rows > 0): ?>
                 <?php while($row = $result->fetch_assoc()): ?>
-                <div class="hack-card reveal" data-type="<?= strtolower(htmlspecialchars($row['application_type'])) ?>">
+                <div class="hack-card reveal" data-type="<?= strtolower(htmlspecialchars($row['application_type'])) ?>" data-lat="<?= $row['latitude'] ?? '' ?>" data-lng="<?= $row['longitude'] ?? '' ?>">
                     <div class="hack-card-header">
                         <h3 class="hack-title"><?= htmlspecialchars($row['title']) ?></h3>
                         <span class="hack-type-badge"><?= htmlspecialchars($row['application_type']) ?></span>
@@ -188,7 +200,7 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
                         </div>
                         <div class="hack-meta-item">
                             <div class="hack-meta-key">📍 Location</div>
-                            <div class="hack-meta-val"><?= htmlspecialchars($row['location']) ?></div>
+                            <div class="hack-meta-val"><?= htmlspecialchars($row['location']) ?> <span class="dist-label" style="display:none; color:var(--plasma-cyan); font-size:0.75rem; margin-left:5px;"></span></div>
                         </div>
                         <div class="hack-meta-item" style="grid-column:span 2;">
                             <div class="hack-meta-key">💰 Prize Pool</div>
@@ -196,10 +208,27 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
                         </div>
                     </div>
                     <p class="hack-desc"><?= htmlspecialchars($row['description']) ?></p>
-                    <div class="hack-actions">
-                        <a href="apply_gateway.php?id=<?= $row['id'] ?>" class="btn btn-primary" style="width:100%;justify-content:center;">
+                    
+                    <?php
+                    // Collect map data
+                    if ($row['latitude'] !== null && $row['longitude'] !== null) {
+                        $mapData[] = [
+                            'id' => $row['id'],
+                            'title' => htmlspecialchars($row['title']),
+                            'lat' => $row['latitude'],
+                            'lng' => $row['longitude'],
+                            'prize' => htmlspecialchars($row['prize_pool']),
+                            'dates' => date('M d', strtotime($row['date_start'])) . ' - ' . date('M d', strtotime($row['date_end']))
+                        ];
+                    }
+                    ?>
+                    <div class="hack-actions" style="display:flex; gap:10px;">
+                        <a href="apply_gateway.php?id=<?= $row['id'] ?>" class="btn btn-primary" style="flex:1; justify-content:center;">
                             <span>Apply Now</span><span class="btn-arrow">↗</span>
                         </a>
+                        <button class="btn btn-ghost" onclick="downloadICS('<?= htmlspecialchars(addslashes($row['title'])) ?>', '<?= htmlspecialchars(addslashes($row['date_start'])) ?>', '<?= htmlspecialchars(addslashes($row['date_end'])) ?>', '<?= htmlspecialchars(addslashes($row['location'])) ?>', '<?= htmlspecialchars(addslashes($row['description'])) ?>')" style="padding: 0 15px; border-color: rgba(79,195,247,0.3); color: var(--plasma-cyan);" title="Add to Calendar">
+                            📅
+                        </button>
                     </div>
                 </div>
                 <?php endwhile; ?>
@@ -267,7 +296,9 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
 <script>
 // Filter hackathon cards
 function filterCards(type, btn) {
-    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.filter-bar button').forEach(c=> {
+        if(c.id !== 'btnGridView' && c.id !== 'btnMapView') c.classList.remove('active');
+    });
     btn.classList.add('active');
     document.querySelectorAll('.hack-card').forEach(card => {
         if (type === 'all' || card.dataset.type === type) {
@@ -276,6 +307,147 @@ function filterCards(type, btn) {
             card.style.display = 'none';
         }
     });
+}
+
+// Map logic
+let globalHackMap = null;
+const hackData = <?= isset($mapData) ? json_encode($mapData) : '[]' ?>;
+
+function initMap() {
+    if(globalHackMap) return;
+    globalHackMap = L.map('hackMap').setView([20.5937, 78.9629], 3);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(globalHackMap);
+
+    hackData.forEach(h => {
+        let popupContent = `
+            <div style="font-family:'Syne', sans-serif; color:#000;">
+                <h4 style="margin:0 0 5px 0;">${h.title}</h4>
+                <p style="margin:0 0 5px 0; font-size:0.8rem;">📅 ${h.dates}<br>💰 ${h.prize}</p>
+                <a href="apply_gateway.php?id=${h.id}" style="color:#7c4dff; font-weight:bold; text-decoration:none;">Apply Now ✨</a>
+            </div>
+        `;
+        L.marker([h.lat, h.lng]).addTo(globalHackMap).bindPopup(popupContent);
+    });
+}
+
+function toggleView(view) {
+    const grid = document.getElementById('hackGrid');
+    const map = document.getElementById('mapContainer');
+    const btnG = document.getElementById('btnGridView');
+    const btnM = document.getElementById('btnMapView');
+
+    if(view === 'grid') {
+        grid.style.display = 'grid';
+        map.style.display = 'none';
+        btnG.classList.add('active');
+        btnM.classList.remove('active');
+    } else {
+        grid.style.display = 'none';
+        map.style.display = 'block';
+        btnM.classList.add('active');
+        btnG.classList.remove('active');
+        initMap();
+        setTimeout(() => globalHackMap.invalidateSize(), 100);
+    }
+}
+
+// Distance Sorting Logic (Haversine)
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);
+    var dLon = deg2rad(lon2-lon1); 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return R * c; 
+}
+function deg2rad(deg) { return deg * (Math.PI/180); }
+
+function findNearMe() {
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+    }
+    const btn = document.getElementById('btnNearMe');
+    btn.innerHTML = '⏳ Locating...';
+    
+    navigator.geolocation.getCurrentPosition(pos => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
+        
+        let grid = document.getElementById('hackGrid');
+        let cards = Array.from(grid.querySelectorAll('.hack-card'));
+        
+        cards.forEach(card => {
+            let lat = parseFloat(card.dataset.lat);
+            let lng = parseFloat(card.dataset.lng);
+            if(!isNaN(lat) && !isNaN(lng)) {
+                let dist = getDistanceFromLatLonInKm(userLat, userLng, lat, lng);
+                card.dataset.dist = dist;
+                let lbl = card.querySelector('.dist-label');
+                lbl.style.display = 'inline';
+                lbl.innerHTML = `(${dist.toFixed(1)} km away)`;
+            } else {
+                card.dataset.dist = 999999; 
+            }
+        });
+        
+        cards.sort((a,b) => parseFloat(a.dataset.dist) - parseFloat(b.dataset.dist));
+        cards.forEach(card => grid.appendChild(card));
+        
+        btn.innerHTML = '📍 Near Me Active';
+        toggleView('grid'); // switch back to grid to see results
+    }, err => {
+        alert("Unable to retrieve location.");
+        btn.innerHTML = '📍 Near Me';
+    });
+}
+
+// Calendar ICS Generation
+function downloadICS(title, start, end, location, description) {
+    const formatICSDate = (dateStr) => {
+        const d = new Date(dateStr);
+        return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    let startFormatted = formatICSDate(start);
+    // Extend end date by 1 day because ICS standard is exclusive for full day events
+    let endDate = new Date(end);
+    endDate.setDate(endDate.getDate() + 1);
+    let endFormatted = formatICSDate(endDate.toISOString());
+
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DevSprint//Hackathon Platform//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+DTSTART:${startFormatted}
+DTEND:${endFormatted}
+SUMMARY:${title}
+LOCATION:${location}
+DESCRIPTION:${description}
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Hackathon Starting
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.replace(/\s+/g, '_')}_Date.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 </script>
 </body>
