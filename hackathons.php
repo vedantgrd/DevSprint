@@ -200,7 +200,10 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
                         </div>
                         <div class="hack-meta-item">
                             <div class="hack-meta-key">📍 Location</div>
-                            <div class="hack-meta-val"><?= htmlspecialchars($row['location']) ?> <span class="dist-label" style="display:none; color:var(--plasma-cyan); font-size:0.75rem; margin-left:5px;"></span></div>
+                            <div class="hack-meta-val">
+                                <?= htmlspecialchars($row['location']) ?> 
+                                <span class="dist-label" style="display:none; color:#00e5ff; font-size:0.75rem; margin-left:5px; background:rgba(0,229,255,0.1); padding:2px 6px; border-radius:4px; font-weight:bold; letter-spacing:0.05em; border:1px solid rgba(0,229,255,0.2);"></span>
+                            </div>
                         </div>
                         <div class="hack-meta-item" style="grid-column:span 2;">
                             <div class="hack-meta-key">💰 Prize Pool</div>
@@ -312,9 +315,16 @@ function filterCards(type, btn) {
 // Map logic
 let globalHackMap = null;
 const hackData = <?= isset($mapData) ? json_encode($mapData) : '[]' ?>;
+let userLocCache = null;
 
 function initMap() {
-    if(globalHackMap) return;
+    if(globalHackMap) {
+        if(userLocCache) {
+            globalHackMap.flyTo([userLocCache.lat, userLocCache.lng], 9);
+        }
+        return;
+    }
+    
     globalHackMap = L.map('hackMap').setView([20.5937, 78.9629], 3);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO',
@@ -322,6 +332,7 @@ function initMap() {
         maxZoom: 20
     }).addTo(globalHackMap);
 
+    let markersArray = [];
     hackData.forEach(h => {
         let popupContent = `
             <div style="font-family:'Syne', sans-serif; color:#000;">
@@ -330,8 +341,23 @@ function initMap() {
                 <a href="apply_gateway.php?id=${h.id}" style="color:#7c4dff; font-weight:bold; text-decoration:none;">Apply Now ✨</a>
             </div>
         `;
-        L.marker([h.lat, h.lng]).addTo(globalHackMap).bindPopup(popupContent);
+        let m = L.marker([h.lat, h.lng]).bindPopup(popupContent);
+        markersArray.push(m);
     });
+    
+    if(markersArray.length > 0) {
+        let group = L.featureGroup(markersArray).addTo(globalHackMap);
+        globalHackMap.fitBounds(group.getBounds().pad(0.1));
+    }
+
+    if(userLocCache) {
+        globalHackMap.setView([userLocCache.lat, userLocCache.lng], 9);
+    } else {
+        navigator.geolocation.getCurrentPosition(pos => {
+            userLocCache = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+            globalHackMap.flyTo([userLocCache.lat, userLocCache.lng], 9);
+        }, err => console.log('Location access denied or failed'));
+    }
 }
 
 function toggleView(view) {
@@ -379,6 +405,7 @@ function findNearMe() {
     navigator.geolocation.getCurrentPosition(pos => {
         const userLat = pos.coords.latitude;
         const userLng = pos.coords.longitude;
+        userLocCache = {lat: userLat, lng: userLng};
         
         let grid = document.getElementById('hackGrid');
         let cards = Array.from(grid.querySelectorAll('.hack-card'));
@@ -390,8 +417,8 @@ function findNearMe() {
                 let dist = getDistanceFromLatLonInKm(userLat, userLng, lat, lng);
                 card.dataset.dist = dist;
                 let lbl = card.querySelector('.dist-label');
-                lbl.style.display = 'inline';
-                lbl.innerHTML = `(${dist.toFixed(1)} km away)`;
+                lbl.style.display = 'inline-block';
+                lbl.innerHTML = `📍 ${dist.toFixed(1)} km away`;
             } else {
                 card.dataset.dist = 999999; 
             }

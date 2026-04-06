@@ -36,6 +36,9 @@ $total_teams = $conn->query("SELECT COUNT(*) as c FROM teams")->fetch_assoc()['c
 <!-- Leaflet.js Maps -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Leaflet Geocoder -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <style>
 /* ── Reset & Base ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -790,6 +793,16 @@ document.addEventListener('DOMContentLoaded', () => {
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
+
+    // Add search bar
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    })
+    .on('markgeocode', function(e) {
+        var bbox = e.geocode.bbox;
+        map.fitBounds(L.latLngBounds(bbox.getSouthWest(), bbox.getNorthEast()));
+    })
+    .addTo(map);
 
     var marker;
     map.on('click', function(e) {
