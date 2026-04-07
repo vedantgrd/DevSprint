@@ -4,9 +4,11 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login_view.php");
     exit();
 }
+require_once 'csrf.php';
 require_once 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require_csrf_token();
     $first = trim($_POST['first']);
     $middle = trim($_POST['middle']);
     $last = trim($_POST['last']);

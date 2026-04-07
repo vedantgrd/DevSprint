@@ -4,9 +4,11 @@ if (!isset($_SESSION['admin_logged_in'])) {
     header("Location: admin_login.php");
     exit();
 }
+require_once 'csrf.php';
 require_once 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require_csrf_token();
     $app_id = intval($_POST['app_id']);
     $status = $_POST['status']; // 'Accepted' or 'Rejected'
     

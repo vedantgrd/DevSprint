@@ -158,6 +158,50 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
 .save-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,229,255,0.25); }
 .save-btn span { position: relative; z-index: 1; }
 
+/* ── Edit Profile Button ── */
+.edit-profile-btn {
+    width: 100%; padding: 0.85rem;
+    background: transparent;
+    border: 1px solid rgba(0,229,255,0.4);
+    color: var(--plasma-cyan);
+    border-radius: var(--radius-sm);
+    font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.08em; cursor: pointer; transition: all 0.3s;
+    margin-top: 0.5rem;
+}
+.edit-profile-btn:hover { background: rgba(0,229,255,0.1); transform: translateY(-2px); }
+.cancel-edit-btn {
+    width: 100%; padding: 0.75rem;
+    background: transparent;
+    border: 1px solid rgba(123,142,176,0.3);
+    color: var(--text-dim);
+    border-radius: var(--radius-sm);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+}
+.cancel-edit-btn:hover { border-color: rgba(255,61,87,0.4); color: #ff3d57; }
+
+/* ── Profile View Rows ── */
+.profile-view-rows { display: flex; flex-direction: column; gap: 0.9rem; }
+.profile-view-row {
+    display: flex; flex-direction: column; gap: 0.2rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(79,195,247,0.08);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s;
+}
+.profile-view-row:hover { border-color: rgba(79,195,247,0.2); }
+.profile-view-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+}
+.profile-view-value {
+    font-size: 0.95rem; color: var(--text-bright); font-weight: 600;
+    word-break: break-word;
+}
+.profile-view-value.empty { color: var(--text-dim); font-style: italic; font-size: 0.85rem; font-weight: 400; }
+
 /* ── Application items ── */
 .app-item {
     background: rgba(0,0,0,0.25);
@@ -240,9 +284,14 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
             <li><a href="hackathons.php">Hackathons</a></li>
             <li><a href="about.php">About</a></li>
             <li><a href="contact.php">Contact</a></li>
-            <li><a href="matchmaking.php">Find Teammates</a></li>
-            <li><a href="profile.php" class="active">My Profile</a></li>
-            <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <li><a href="teams.php">Teams</a></li>
+                <li><a href="matchmaking.php">Find Teammates</a></li>
+                <li><a href="profile.php" class="active">My Profile</a></li>
+                <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
+            <?php else: ?>
+                <li><a href="login_view.php" class="nav-btn">Launch →</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>
@@ -283,9 +332,10 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
         <!-- Two-column grid -->
         <div class="profile-grid">
 
-            <!-- Update Profile Card -->
-            <div class="p-card reveal d1">
-                <div class="p-card-title"><span class="card-icon">🛸</span> Update Commander Profile</div>
+            <!-- Profile Card with View/Edit Mode -->
+            <div class="p-card reveal d1" id="profile-card">
+                <!-- Card Title dynamically changes -->
+                <div class="p-card-title" id="profile-card-title"><span class="card-icon">🛸</span> Commander Profile</div>
 
                 <?php if (isset($_SESSION['profile_success'])): ?>
                     <div class="profile-alert success">✅ <?= htmlspecialchars($_SESSION['profile_success']) ?></div>
@@ -295,24 +345,87 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
                     <?php unset($_SESSION['profile_error']); ?>
                 <?php endif; ?>
 
-                <form action="update_profile.php" method="POST">
-                    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
-                    <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
-                    <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
-                    <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
-                    <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']??'') ?>"></div>
-                    <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']??'') ?>"></div>
-
-                    <div class="p-card-title" style="margin-top:1.5rem;font-size:0.8rem;border-bottom:none;padding-bottom:0;margin-bottom:1rem;">
-                        <span class="card-icon">🔭</span> Developer Info
+                <!-- ── VIEW MODE ── -->
+                <div id="profile-view-mode">
+                    <div class="profile-view-rows">
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">First Name</span>
+                            <span class="profile-view-value <?= empty($user['first_name']) ? 'empty' : '' ?>"><?= $user['first_name'] ? htmlspecialchars($user['first_name']) : '— not set —' ?></span>
+                        </div>
+                        <?php if (!empty($user['middle_name'])): ?>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">Middle Name</span>
+                            <span class="profile-view-value"><?= htmlspecialchars($user['middle_name']) ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">Last Name</span>
+                            <span class="profile-view-value <?= empty($user['last_name']) ? 'empty' : '' ?>"><?= $user['last_name'] ? htmlspecialchars($user['last_name']) : '— not set —' ?></span>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">Email</span>
+                            <span class="profile-view-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">Phone</span>
+                            <span class="profile-view-value <?= empty($user['phone']) ? 'empty' : '' ?>"><?= $user['phone'] ? htmlspecialchars($user['phone']) : '— not set —' ?></span>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">City</span>
+                            <span class="profile-view-value <?= empty($user['city']) ? 'empty' : '' ?>"><?= $user['city'] ? htmlspecialchars($user['city']) : '— not set —' ?></span>
+                        </div>
+                        <div class="profile-view-row" style="border-top:1px solid rgba(79,195,247,0.12); margin-top:0.25rem; padding-top:1rem;">
+                            <span class="profile-view-label">Skills</span>
+                            <span class="profile-view-value <?= empty($user['skills']) ? 'empty' : '' ?>"><?= $user['skills'] ? htmlspecialchars($user['skills']) : '— not set —' ?></span>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">GitHub</span>
+                            <?php if ($user['github']): ?>
+                                <a href="<?= htmlspecialchars($user['github']) ?>" target="_blank" class="profile-view-value" style="color:var(--plasma-cyan);text-decoration:none;"><?= htmlspecialchars($user['github']) ?></a>
+                            <?php else: ?>
+                                <span class="profile-view-value empty">— not set —</span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">LinkedIn</span>
+                            <?php if ($user['linkedin']): ?>
+                                <a href="<?= htmlspecialchars($user['linkedin']) ?>" target="_blank" class="profile-view-value" style="color:var(--plasma-cyan);text-decoration:none;"><?= htmlspecialchars($user['linkedin']) ?></a>
+                            <?php else: ?>
+                                <span class="profile-view-value empty">— not set —</span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-view-row">
+                            <span class="profile-view-label">Bio</span>
+                            <span class="profile-view-value <?= empty($user['bio']) ? 'empty' : '' ?>" style="font-weight:400;font-size:0.9rem;line-height:1.6;"><?= $user['bio'] ? nl2br(htmlspecialchars($user['bio'])) : '— not set —' ?></span>
+                        </div>
                     </div>
-                    <div class="form-group"><label>Skills <span style="font-size:0.7rem;opacity:0.6;">(comma separated)</span></label><input type="text" name="skills" value="<?= htmlspecialchars($user['skills']??'') ?>" placeholder="e.g. React, Python, UI/UX"></div>
-                    <div class="form-group"><label>GitHub URL</label><input type="text" name="github" value="<?= htmlspecialchars($user['github']??'') ?>" placeholder="https://github.com/username"></div>
-                    <div class="form-group"><label>LinkedIn URL</label><input type="text" name="linkedin" value="<?= htmlspecialchars($user['linkedin']??'') ?>" placeholder="https://linkedin.com/in/username"></div>
-                    <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" placeholder="Tell the universe about yourself..."><?= htmlspecialchars($user['bio']??'') ?></textarea></div>
+                    <button type="button" class="edit-profile-btn" id="btn-edit-profile" onclick="toggleProfileEdit(true)">
+                        ✏ Edit Profile
+                    </button>
+                </div>
 
-                    <button type="submit" class="save-btn"><span>💾 SAVE CHANGES</span></button>
-                </form>
+                <!-- ── EDIT MODE (hidden by default) ── -->
+                <div id="profile-edit-mode" style="display:none;">
+                    <form action="update_profile.php" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                        <div class="form-group"><label>First Name</label><input type="text" name="first" value="<?= htmlspecialchars($user['first_name']??'') ?>" required></div>
+                        <div class="form-group"><label>Middle Name</label><input type="text" name="middle" value="<?= htmlspecialchars($user['middle_name']??'') ?>"></div>
+                        <div class="form-group"><label>Last Name</label><input type="text" name="last" value="<?= htmlspecialchars($user['last_name']??'') ?>" required></div>
+                        <div class="form-group"><label>Phone</label><input type="text" name="phone" value="<?= htmlspecialchars($user['phone']??'') ?>"></div>
+                        <div class="form-group"><label>City</label><input type="text" name="city" value="<?= htmlspecialchars($user['city']??'') ?>"></div>
+
+                        <div class="p-card-title" style="margin-top:1.5rem;font-size:0.8rem;border-bottom:none;padding-bottom:0;margin-bottom:1rem;">
+                            <span class="card-icon">🔭</span> Developer Info
+                        </div>
+                        <div class="form-group"><label>Skills <span style="font-size:0.7rem;opacity:0.6;">(comma separated)</span></label><input type="text" name="skills" value="<?= htmlspecialchars($user['skills']??'') ?>" placeholder="e.g. React, Python, UI/UX"></div>
+                        <div class="form-group"><label>GitHub URL</label><input type="text" name="github" value="<?= htmlspecialchars($user['github']??'') ?>" placeholder="https://github.com/username"></div>
+                        <div class="form-group"><label>LinkedIn URL</label><input type="text" name="linkedin" value="<?= htmlspecialchars($user['linkedin']??'') ?>" placeholder="https://linkedin.com/in/username"></div>
+                        <div class="form-group"><label>Bio</label><textarea name="bio" rows="4" placeholder="Tell the universe about yourself..."><?= htmlspecialchars($user['bio']??'') ?></textarea></div>
+
+                        <button type="submit" class="save-btn"><span>💾 SAVE CHANGES</span></button>
+                    </form>
+                    <button type="button" class="cancel-edit-btn" onclick="toggleProfileEdit(false)">✖ Cancel</button>
+                </div>
             </div>
 
             <!-- My Applications Card -->
@@ -432,5 +545,24 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
 </footer>
 
 <script src="script.js"></script>
+<script>
+function toggleProfileEdit(editMode) {
+    var viewMode = document.getElementById('profile-view-mode');
+    var editModeEl = document.getElementById('profile-edit-mode');
+    var cardTitle = document.getElementById('profile-card-title');
+
+    if (editMode) {
+        viewMode.style.display = 'none';
+        editModeEl.style.display = 'block';
+        cardTitle.innerHTML = '<span class="card-icon">✏️</span> Edit Commander Profile';
+        // Smooth scroll to card
+        document.getElementById('profile-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        editModeEl.style.display = 'none';
+        viewMode.style.display = 'block';
+        cardTitle.innerHTML = '<span class="card-icon">🛸</span> Commander Profile';
+    }
+}
+</script>
 </body>
 </html>
