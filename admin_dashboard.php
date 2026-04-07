@@ -642,13 +642,18 @@ body {
                     <input type="hidden" name="longitude" id="lngInput">
                     <small style="color: #00e5ff; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; margin-top: 5px; display: block;">Click on the map to drop a coordinate pin.</small>
                 </div>
-                <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" name="date_start" required>
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Start Date</label>
+                        <input type="date" name="date_start" id="date_start" required>
+                    </div>
+                    <div style="flex:1;">
+                        <label>End Date</label>
+                        <input type="date" name="date_end" id="date_end" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>End Date</label>
-                    <input type="date" name="date_end" required>
+                <div id="duration_display" style="color:var(--comet-green); font-family:'JetBrains Mono', monospace; font-size:0.75rem; margin-top:-10px; margin-bottom:15px; display:none;">
+                    Duration: <span id="duration_val"></span>
                 </div>
                 <div class="form-group">
                     <label>Prize Pool</label>
@@ -833,6 +838,52 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('lngInput').value = lng;
     });
 });
+// Date Validation & Duration
+document.addEventListener('DOMContentLoaded', () => {
+    const startDate = document.getElementById('date_start');
+    const endDate = document.getElementById('date_end');
+    const durationLabel = document.getElementById('duration_display');
+    const durationVal = document.getElementById('duration_val');
+
+    // Set minimum start date to TODAY
+    const today = new Date().toISOString().split('T')[0];
+    startDate.setAttribute('min', today);
+    endDate.setAttribute('min', today);
+
+    function calcDuration() {
+        if(startDate.value && endDate.value) {
+            const start = new Date(startDate.value);
+            const end = new Date(endDate.value);
+            const diffTime = end - start;
+            if(diffTime >= 0) {
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                durationLabel.style.display = 'block';
+                // If it's a 1-day difference it could be roughly 24 hours depending on time, let's show days and hours.
+                if(diffDays === 0) {
+                    durationVal.textContent = '1 Day (Standard 24h event)';
+                } else if(diffDays === 1) {
+                    durationVal.textContent = '2 Days (Standard 48h event)';
+                } else {
+                    durationVal.textContent = `${diffDays + 1} Days`;
+                }
+            } else {
+                durationLabel.style.display = 'none';
+            }
+        }
+    }
+
+    startDate.addEventListener('change', () => {
+        // End date cannot be before start date
+        endDate.setAttribute('min', startDate.value);
+        if(endDate.value && endDate.value < startDate.value) {
+            endDate.value = startDate.value;
+        }
+        calcDuration();
+    });
+
+    endDate.addEventListener('change', calcDuration);
+});
+
 </script>
 </body>
 </html>
