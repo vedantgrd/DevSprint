@@ -306,7 +306,7 @@ body {
 /* ── Content Grid ── */
 .dash-grid {
     display: grid;
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 345px 1fr;
     gap: 1.5rem;
     align-items: start;
 }
@@ -317,6 +317,10 @@ body {
     border: 1px solid rgba(79, 195, 247, 0.1);
     border-radius: 18px;
     padding: 1.75rem;
+}
+
+#add-section {
+    padding: 1.5rem;
 }
 
 .d-card-title {
@@ -438,6 +442,9 @@ body {
     font-size: 0.88rem;
     vertical-align: middle;
 }
+.data-table td.td-actions {
+    white-space: nowrap;
+}
 
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:hover td { background: rgba(79, 195, 247, 0.03); }
@@ -459,18 +466,27 @@ body {
 .badge-rejected { background: rgba(239,68,68,0.12);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
 .badge-member   { background: rgba(79,195,247,0.12);  color: #4fc3f7; border: 1px solid rgba(79,195,247,0.3); }
 
+/* ── Leaflet Geocoder Dropdown Fix ── */
+/* ── Leaflet Geocoder Dropdown Fix ── */
+.leaflet-control-geocoder-alternatives {
+    max-height: 250px !important;
+    overflow-y: auto !important;
+}
+
 /* ── Action Buttons ── */
 .action-accept-btn {
     background: rgba(0,230,118,0.1);
     color: #00e676;
     border: 1px solid rgba(0,230,118,0.3);
-    padding: 0.3rem 0.7rem;
+    padding: 0.35rem 0.6rem;
     border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
     font-family: 'JetBrains Mono', monospace;
     transition: background 0.2s;
+    width: 100%;
+    margin-bottom: 0.25rem;
 }
 .action-accept-btn:hover { background: rgba(0,230,118,0.22); }
 
@@ -478,13 +494,14 @@ body {
     background: rgba(239,68,68,0.1);
     color: #ef4444;
     border: 1px solid rgba(239,68,68,0.25);
-    padding: 0.3rem 0.7rem;
+    padding: 0.35rem 0.6rem;
     border-radius: 6px;
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
     font-family: 'JetBrains Mono', monospace;
     transition: background 0.2s;
+    width: 100%;
 }
 .action-reject-btn:hover { background: rgba(239,68,68,0.2); }
 
@@ -595,6 +612,18 @@ body {
         </div>
     </div>
 
+    <?php if (isset($_SESSION['profile_success'])): ?>
+        <div style="padding:1rem; border-radius:10px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:#00e676; margin-bottom:1.5rem; font-family:'JetBrains Mono', monospace; font-size:0.8rem;">
+            ✅ <?= htmlspecialchars($_SESSION['profile_success']) ?>
+        </div>
+        <?php unset($_SESSION['profile_success']); ?>
+    <?php elseif (isset($_SESSION['profile_error'])): ?>
+        <div style="padding:1rem; border-radius:10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; margin-bottom:1.5rem; font-family:'JetBrains Mono', monospace; font-size:0.8rem;">
+            ⚠️ <?= htmlspecialchars($_SESSION['profile_error']) ?>
+        </div>
+        <?php unset($_SESSION['profile_error']); ?>
+    <?php endif; ?>
+
     <!-- Stats Cards -->
     <div class="stats-row">
         <div class="stat-card">
@@ -637,18 +666,21 @@ body {
                 </div>
                 <div class="form-group">
                     <label>Pin Location on Map (Optional for Virtual events)</label>
-                    <div id="adminMap" style="height: 250px; border-radius: 6px; border: 1px solid rgba(79, 195, 247, 0.15);"></div>
+                    <div id="adminMap" style="height: 400px; border-radius: 6px; border: 1px solid rgba(79, 195, 247, 0.15); z-index: 10;"></div>
                     <input type="hidden" name="latitude" id="latInput">
                     <input type="hidden" name="longitude" id="lngInput">
                     <small style="color: #00e5ff; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; margin-top: 5px; display: block;">Click on the map to drop a coordinate pin.</small>
                 </div>
                 <div class="form-group">
                     <label>Start Date</label>
-                    <input type="date" name="date_start" required>
+                    <input type="date" name="date_start" id="date_start" required>
                 </div>
                 <div class="form-group">
                     <label>End Date</label>
-                    <input type="date" name="date_end" required>
+                    <input type="date" name="date_end" id="date_end" required>
+                </div>
+                <div id="duration_display" style="color:var(--comet-green); font-family:'JetBrains Mono', monospace; font-size:0.75rem; margin-top:-10px; margin-bottom:15px; display:none;">
+                    Duration: <span id="duration_val"></span>
                 </div>
                 <div class="form-group">
                     <label>Prize Pool</label>
@@ -713,24 +745,28 @@ body {
                                     ?>
                                     <span class="badge <?= $bc ?>"><?= htmlspecialchars($st) ?></span>
                                 </td>
-                                <td>
+                                <td class="td-actions">
                                     <?php if ($a['team_name']): ?>
                                         <a href="admin_view_team.php?app_id=<?= $a['id'] ?>" class="team-view-btn">View Team</a>
                                     <?php else: ?>
-                                        <div style="display:flex; gap:0.4rem;">
-                                            <form action="admin_update_application.php" method="POST" style="display:inline; margin:0;">
-                                                <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
-                                                <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
-                                                <input type="hidden" name="status" value="Accepted">
-                                                <button type="submit" class="action-accept-btn" title="Accept">✓ Accept</button>
-                                            </form>
-                                            <form action="admin_update_application.php" method="POST" style="display:inline; margin:0;">
-                                                <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
-                                                <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
-                                                <input type="hidden" name="status" value="Rejected">
-                                                <button type="submit" class="action-reject-btn" title="Reject">✕ Reject</button>
-                                            </form>
-                                        </div>
+                                        <?php if ($st === 'Pending'): ?>
+                                            <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                                                <form action="admin_update_application.php" method="POST" style="margin:0;">
+                                                    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                                                    <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
+                                                    <input type="hidden" name="status" value="Accepted">
+                                                    <button type="submit" class="action-accept-btn" title="Accept">✓ Accept</button>
+                                                </form>
+                                                <form action="admin_update_application.php" method="POST" style="margin:0;">
+                                                    <input type="hidden" name="csrf_token" value="<?= function_exists('generate_csrf_token') ? generate_csrf_token() : '' ?>">
+                                                    <input type="hidden" name="app_id" value="<?= $a['id'] ?>">
+                                                    <input type="hidden" name="status" value="Rejected">
+                                                    <button type="submit" class="action-reject-btn" title="Reject">✕ Reject</button>
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <span style="color:var(--text-dim); font-size:0.75rem; font-family:'JetBrains Mono',monospace;">✓ Processed</span>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -832,6 +868,64 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('latInput').value = lat;
         document.getElementById('lngInput').value = lng;
     });
+});
+
+// Date Synchronization and Duration Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const startInput = document.getElementById('date_start');
+    const endInput = document.getElementById('date_end');
+    const durDisplay = document.getElementById('duration_display');
+    const durVal = document.getElementById('duration_val');
+
+    // Prevent past dates purely from today onwards
+    const today = new Date().toISOString().split('T')[0];
+    startInput.setAttribute('min', today);
+    endInput.setAttribute('min', today);
+
+    // Lock the End Date calendar ONLY when Start Date physically finishes changing.
+    // Doing it continuously while typing will cause Chrome to delete partially-typed years!
+    startInput.addEventListener('change', () => {
+        if (startInput.value) {
+            endInput.setAttribute('min', startInput.value);
+        } else {
+            endInput.setAttribute('min', today);
+        }
+    });
+
+    function calcDuration() {
+        if (!startInput.value || !endInput.value) {
+            durDisplay.style.display = 'none';
+            return;
+        }
+
+        const startD = new Date(startInput.value);
+        const endD = new Date(endInput.value);
+        
+        // Prevent showing garbage math, but importantly, do NOT actively delete their input!
+        if (endD < startD) {
+            durVal.innerText = "Invalid Duration";
+            durDisplay.style.display = 'block';
+            return;
+        }
+
+        const diffTime = Math.abs(endD - startD);
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        
+        durDisplay.style.display = 'block';
+        if (diffDays === 0) {
+            durVal.innerText = "24 Hours (Same Day)";
+        } else if (diffDays === 1) {
+            // Saturday to Sunday mathematically equals 1 day, but physically is 2 days.
+            durVal.innerText = "2 Days (48 Hours)";
+        } else {
+            // Inclusive computation
+            durVal.innerText = (diffDays + 1) + " Days";
+        }
+    }
+    
+    // Smooth, instant duration calculation that doesn't modify DOM elements
+    startInput.addEventListener('input', calcDuration);
+    endInput.addEventListener('input', calcDuration);
 });
 </script>
 </body>

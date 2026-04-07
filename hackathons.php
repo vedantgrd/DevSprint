@@ -146,6 +146,7 @@ $result = $conn->query("SELECT * FROM hackathons ORDER BY date_start ASC");
                 <li><a href="teams.php">Teams</a></li>
                 <li><a href="matchmaking.php">Find Teammates</a></li>
                 <li><a href="profile.php">My Profile</a></li>
+                <li><a href="inbox.php">🔔 Inbox</a></li>
                 <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
             <?php else: ?>
                 <li><a href="login_view.php" class="nav-btn">Launch →</a></li>
