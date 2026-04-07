@@ -121,17 +121,37 @@ $notif_stmt->close();
 
     <div class="inbox-container">
         <?php if ($notifications && $notifications->num_rows > 0): ?>
-            <?php while($n = $notifications->fetch_assoc()): ?>
-                <div class="notif-card" style="<?= !$n['is_read'] ? 'box-shadow: 0 0 15px rgba(0,229,255,0.1);' : '' ?>">
+            <?php while($n = $notifications->fetch_assoc()):
+                $is_admin_reply = (strpos($n['title'], 'Admin Reply') !== false);
+                $accent_color   = $is_admin_reply ? 'var(--pulsar-violet)' : 'var(--plasma-cyan)';
+                $icon           = $is_admin_reply ? '↩' : '💬';
+                $is_unread      = !$n['is_read'];
+            ?>
+                <div class="notif-card" style="
+                    border-left-color: <?= $accent_color ?>;
+                    <?= $is_unread ? 'box-shadow: 0 0 18px rgba(' . ($is_admin_reply ? '124,77,255' : '0,229,255') . ',0.12);' : '' ?>
+                ">
                     <div class="notif-title">
-                        <span>💬</span> 
+                        <span><?= $icon ?></span>
                         <?= htmlspecialchars($n['title']) ?>
+                        <?php if ($is_unread): ?>
+                            <span style="
+                                margin-left: auto;
+                                background: rgba(<?= $is_admin_reply ? '124,77,255' : '0,229,255' ?>, 0.15);
+                                color: <?= $accent_color ?>;
+                                border: 1px solid <?= $accent_color ?>;
+                                font-family: 'JetBrains Mono', monospace;
+                                font-size: 0.6rem; font-weight: 700;
+                                padding: 0.15rem 0.55rem; border-radius: 40px;
+                                letter-spacing: 0.08em;
+                            ">NEW</span>
+                        <?php endif; ?>
                     </div>
                     <div class="notif-body">
                         <?= nl2br(htmlspecialchars($n['message'])) ?>
                     </div>
                     <div class="notif-meta">
-                        <span>Received</span>
+                        <span><?= $is_admin_reply ? '📨 Admin Reply' : 'System Notification' ?></span>
                         <span><?= date('D, M d Y - H:i', strtotime($n['created_at'])) ?></span>
                     </div>
                 </div>
