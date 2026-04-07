@@ -9,6 +9,7 @@ require_once 'db_connect.php';
 
 // Handle mark-as-read
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
+    require_csrf_token();
     $msg_id = (int)$_POST['msg_id'];
     $conn->query("UPDATE messages SET is_read = 1 WHERE id = $msg_id AND message_type = 'contact'");
     header("Location: admin_messages.php");
@@ -17,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
 
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_msg'])) {
+    require_csrf_token();
     $msg_id = (int)$_POST['msg_id'];
     $conn->query("DELETE FROM messages WHERE id = $msg_id AND message_type = 'contact'");
     header("Location: admin_messages.php");
@@ -506,17 +508,21 @@ body {
                 <div class="msg-actions">
                     <?php if ($is_unread): ?>
                         <form method="POST" action="admin_messages.php" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                             <input type="hidden" name="msg_id" value="<?= $msg['id'] ?>">
                             <button type="submit" name="mark_read" class="btn-mark-read">✔ Mark as Read</button>
                         </form>
                     <?php endif; ?>
 
-                    <a href="mailto:<?= $display_email ?>?subject=Re: <?= urlencode($msg['subject'] ?: 'Your DevSprint Message') ?>" class="btn-mark-read" style="text-decoration:none;display:inline-block;">
-                        ↩ Reply via Email
+                    <a href="mailto:<?= $display_email ?>?subject=Re%3A%20<?= rawurlencode($msg['subject'] ?: 'Your DevSprint Message') ?>" 
+                       class="btn-mark-read" style="text-decoration:none;display:inline-block;" 
+                       title="Opens your default mail client" target="_blank">
+                        ↩ Reply via Mail
                     </a>
 
                     <form method="POST" action="admin_messages.php" style="display:inline;"
                           onsubmit="return confirm('Delete this message permanently?');">
+                        <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                         <input type="hidden" name="msg_id" value="<?= $msg['id'] ?>">
                         <button type="submit" name="delete_msg" class="btn-delete">🗑 Delete</button>
                     </form>

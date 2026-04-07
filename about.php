@@ -281,6 +281,8 @@
             <li><a href="about.php" class="active">About</a></li>
             <li><a href="contact.php">Contact</a></li>
             <?php if(isset($_SESSION['user_id'])): ?>
+                <li><a href="teams.php">Teams</a></li>
+                <li><a href="matchmaking.php">Find Teammates</a></li>
                 <li><a href="profile.php">My Profile</a></li>
                 <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
             <?php else: ?>

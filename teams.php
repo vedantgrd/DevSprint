@@ -143,10 +143,16 @@ $explore_stmt->close();
         <ul class="nav-menu" id="nav-menu">
             <li><a href="index.php">Home</a></li>
             <li><a href="hackathons.php">Hackathons</a></li>
-            <li><a href="matchmaking.php">Find Teammates</a></li>
-            <li><a href="teams.php" class="active">My Teams</a></li>
-            <li><a href="profile.php">My Profile</a></li>
-            <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="contact.php">Contact</a></li>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <li><a href="teams.php" class="active">Teams</a></li>
+                <li><a href="matchmaking.php">Find Teammates</a></li>
+                <li><a href="profile.php">My Profile</a></li>
+                <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
+            <?php else: ?>
+                <li><a href="login_view.php" class="nav-btn">Launch →</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>

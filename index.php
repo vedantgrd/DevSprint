@@ -242,12 +242,19 @@
         }
 
         .nav-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-bright);
-            font-size: 1.5rem;
-            cursor: pointer;
+            display:none;
+            background:none;
+            border:1px solid rgba(79,195,247,0.3);
+            color:var(--plasma-cyan);
+            font-size:1.2rem;
+            padding:0.4rem 0.7rem;
+            border-radius:var(--radius-sm);
+            cursor:pointer;
+            transition:all 0.2s;
+        }
+        .nav-toggle:hover {
+            background:rgba(79,195,247,0.08);
+            border-color:var(--plasma-cyan);
         }
 
         /* ── Hero ── */

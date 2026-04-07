@@ -1,5 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
+require_once 'csrf.php';
 require_once 'db_connect.php';
 
 // Must be logged in
@@ -9,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $user_id     = (int)$_SESSION['user_id'];
     $name        = trim($_POST['name'] ?? '');
     $email       = trim($_POST['email'] ?? '');
