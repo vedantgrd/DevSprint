@@ -343,6 +343,98 @@ body {
     border-color: rgba(255,61,87,0.4);
 }
 
+/* ── Reply button ── */
+.btn-reply {
+    background: rgba(124,77,255,0.12); color: #7c4dff;
+    border: 1px solid rgba(124,77,255,0.35);
+    padding: 0.35rem 0.85rem; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 700; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; transition: background 0.2s;
+    display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.btn-reply:hover { background: rgba(124,77,255,0.25); }
+
+/* ── Reply Modal ── */
+.modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,10,0.85); backdrop-filter: blur(6px);
+    z-index: 9999; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+    background: #04041a;
+    border: 1px solid rgba(124,77,255,0.35);
+    border-radius: 18px; padding: 2rem;
+    width: 100%; max-width: 580px;
+    position: relative;
+    box-shadow: 0 0 60px rgba(124,77,255,0.18);
+    animation: modalIn 0.25s ease;
+}
+@keyframes modalIn {
+    from { opacity:0; transform: scale(0.94) translateY(8px); }
+    to   { opacity:1; transform: scale(1)   translateY(0); }
+}
+.modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    color: #7b8eb0; border-radius: 50%; width: 32px; height: 32px;
+    cursor: pointer; font-size: 1rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(255,61,87,0.15); color: #ff3d57; border-color: rgba(255,61,87,0.3); }
+.modal-title {
+    font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700;
+    color: #e8f0ff; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.modal-field { margin-bottom: 1.1rem; }
+.modal-label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7b8eb0; margin-bottom: 0.4rem;
+}
+.modal-input, .modal-textarea {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(79,195,247,0.15); border-radius: 8px;
+    color: #e8f0ff; font-family: 'Syne', sans-serif; font-size: 0.88rem;
+    padding: 0.65rem 1rem; outline: none; transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.modal-input:focus, .modal-textarea:focus {
+    border-color: rgba(124,77,255,0.5); box-shadow: 0 0 0 3px rgba(124,77,255,0.08);
+}
+.modal-input[readonly] { opacity: 0.65; cursor: not-allowed; }
+.modal-textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+.modal-footer {
+    display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;
+    padding-top: 1rem; border-top: 1px solid rgba(79,195,247,0.08);
+}
+.btn-send-reply {
+    background: linear-gradient(135deg, #7c4dff, #00e5ff);
+    color: #04041a; border: none; border-radius: 8px;
+    padding: 0.65rem 1.5rem; font-family: 'Orbitron', monospace;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.btn-send-reply:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(124,77,255,0.4); }
+.btn-send-reply:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-cancel-reply {
+    background: transparent; color: #7b8eb0;
+    border: 1px solid rgba(79,195,247,0.15);
+    border-radius: 8px; padding: 0.65rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.2s;
+}
+.btn-cancel-reply:hover { color: #e8f0ff; border-color: rgba(79,195,247,0.3); }
+.modal-toast {
+    padding: 0.75rem 1rem; border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    margin-bottom: 1rem; display: none;
+}
+.modal-toast.success { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); color: #00e676; }
+.modal-toast.error   { background: rgba(255,61,87,0.1);  border: 1px solid rgba(255,61,87,0.3);  color: #ff3d57; }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
     .sidebar { position: relative; width: 100%; height: auto; }
@@ -512,11 +604,15 @@ body {
                         </form>
                     <?php endif; ?>
 
-                    <a href="mailto:<?= $display_email ?>?subject=Re%3A%20<?= rawurlencode($msg['subject'] ?: 'Your DevSprint Message') ?>" 
-                       class="btn-mark-read" style="text-decoration:none;display:inline-block;" 
-                       title="Opens your default mail client" target="_blank">
+                    <button type="button" class="btn-reply"
+                        onclick="openReplyModal(
+                            '<?= $msg['id'] ?>',
+                            '<?= addslashes($display_email) ?>',
+                            '<?= addslashes($display_name) ?>',
+                            '<?= addslashes($msg['subject'] ?: 'Your DevSprint Message') ?>'
+                        )">
                         ↩ Reply via Mail
-                    </a>
+                    </button>
 
                     <form method="POST" action="admin_messages.php" style="display:inline;"
                           onsubmit="return confirm('Delete this message permanently?');">
@@ -540,8 +636,123 @@ body {
 </main>
 </div><!-- end dash-layout -->
 
+<!-- ── REPLY MODAL ── -->
+<div class="modal-overlay" id="replyModal" role="dialog" aria-modal="true" aria-labelledby="replyModalTitle">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeReplyModal()" title="Close">✕</button>
+
+        <div class="modal-title" id="replyModalTitle">
+            ↩ Reply to Transmission
+        </div>
+
+        <!-- Toast feedback -->
+        <div class="modal-toast" id="reply-toast"></div>
+
+        <form id="replyForm">
+            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
+            <input type="hidden" name="msg_id"     id="reply-msg-id" value="">
+
+            <div class="modal-field">
+                <label class="modal-label">To (Recipient Email)</label>
+                <input type="email" class="modal-input" name="to_email" id="reply-to-email" readonly>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Recipient Name</label>
+                <input type="text" class="modal-input" name="to_name" id="reply-to-name" readonly>
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Subject</label>
+                <input type="text" class="modal-input" name="subject" id="reply-subject" required
+                       placeholder="Reply subject...">
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Your Reply</label>
+                <textarea class="modal-textarea" name="body" id="reply-body" required
+                          placeholder="Write your reply here..."></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel-reply" onclick="closeReplyModal()">Cancel</button>
+                <button type="submit" class="btn-send-reply" id="reply-send-btn">📨 Send Reply</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ── END REPLY MODAL ── -->
+
 <script>
-// Highlight active filter
+// ── Reply Modal Logic ──────────────────────────────────────────────────────
+function openReplyModal(msgId, email, name, subject) {
+    document.getElementById('reply-msg-id').value    = msgId;
+    document.getElementById('reply-to-email').value  = email;
+    document.getElementById('reply-to-name').value   = name;
+    document.getElementById('reply-subject').value   = 'Re: ' + subject;
+    document.getElementById('reply-body').value      = '';
+    document.getElementById('reply-toast').style.display = 'none';
+    document.getElementById('reply-toast').className = 'modal-toast';
+    document.getElementById('reply-send-btn').disabled = false;
+    document.getElementById('reply-send-btn').textContent = '📨 Send Reply';
+    document.getElementById('replyModal').classList.add('open');
+    setTimeout(() => document.getElementById('reply-body').focus(), 200);
+}
+
+function closeReplyModal() {
+    document.getElementById('replyModal').classList.remove('open');
+}
+
+// Close on backdrop click
+document.getElementById('replyModal').addEventListener('click', function(e) {
+    if (e.target === this) closeReplyModal();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeReplyModal();
+});
+
+// Handle form submit via AJAX
+document.getElementById('replyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn   = document.getElementById('reply-send-btn');
+    const toast = document.getElementById('reply-toast');
+
+    btn.disabled    = true;
+    btn.textContent = '⏳ Sending...';
+    toast.style.display = 'none';
+
+    try {
+        const formData = new FormData(this);
+        const response = await fetch('admin_reply.php', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+
+        toast.className = 'modal-toast ' + (result.success ? 'success' : 'error');
+        toast.textContent = result.success ? '✅ ' + result.message : '⚠️ ' + result.message;
+        toast.style.display = 'block';
+
+        if (result.success) {
+            btn.textContent = '✅ Sent!';
+            setTimeout(() => closeReplyModal(), 2200);
+        } else {
+            btn.disabled    = false;
+            btn.textContent = '📨 Send Reply';
+        }
+    } catch (err) {
+        toast.className = 'modal-toast error';
+        toast.textContent = '⚠️ Network error. Please try again.';
+        toast.style.display = 'block';
+        btn.disabled    = false;
+        btn.textContent = '📨 Send Reply';
+    }
+});
+
+// ── Highlight active filter ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const filter = urlParams.get('filter') || 'all';
