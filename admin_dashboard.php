@@ -43,7 +43,11 @@ $unread_msgs   = $conn->query("SELECT COUNT(*) as c FROM messages WHERE message_
 <style>
 /* ── Reset & Base ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nova-orange) var(--void);
+}
 
 :root {
     --void: #00000a;
@@ -211,6 +215,23 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: #7b8eb0;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--void);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--nova-orange), #ff9100);
+    border-radius: 10px;
+    border: 2px solid var(--void);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff9100, #ffb300);
 }
 
 .systems-status {
