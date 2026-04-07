@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once 'db_connect.php';
 
-$user_id = $_SESSION['user_id'];
+$user_id = intval($_SESSION['user_id']);
 $stmt = $conn->prepare("SELECT first_name, middle_name, last_name, email, phone, city, bio, skills, github, linkedin FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -23,6 +23,13 @@ if ($app_stmt->execute()) {
     $applications = [];
 }
 $app_stmt->close();
+
+// NEW FEATURE: Count unread notifications
+$unread_q = $conn->prepare("SELECT COUNT(*) as unread FROM notifications WHERE user_id = ? AND is_read = 0");
+$unread_q->bind_param("i", $user_id);
+$unread_q->execute();
+$unread_count = $unread_q->get_result()->fetch_assoc()['unread'];
+$unread_q->close();
 
 // Parse GitHub username
 $github_username = '';
@@ -242,6 +249,7 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
             <li><a href="contact.php">Contact</a></li>
             <li><a href="matchmaking.php">Find Teammates</a></li>
             <li><a href="profile.php" class="active">My Profile</a></li>
+            <li><a href="inbox.php" style="color:var(--plasma-cyan);">🔔 Inbox <?= $unread_count > 0 ? "<span style='color:red;'>({$unread_count})</span>" : "" ?></a></li>
             <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
         </ul>
     </div>
