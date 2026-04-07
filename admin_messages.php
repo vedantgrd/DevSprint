@@ -52,7 +52,20 @@ $unread_msgs = $conn->query("SELECT COUNT(*) as c FROM messages WHERE message_ty
 <style>
 /* ── Reset & Base ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #ff6d00 #00000a;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #00000a; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff6d00, #ff9100);
+    border-radius: 10px;
+    border: 2px solid #00000a;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ff9100, #ffb300); }
 
 :root {
     --void: #00000a;
