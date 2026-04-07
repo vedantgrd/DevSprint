@@ -291,21 +291,15 @@ $skills_arr = array_filter(array_map('trim', explode(',', $user['skills'] ?? '')
             <li><a href="hackathons.php">Hackathons</a></li>
             <li><a href="about.php">About</a></li>
             <li><a href="contact.php">Contact</a></li>
-<<<<<<< HEAD
             <?php if(isset($_SESSION['user_id'])): ?>
                 <li><a href="teams.php">Teams</a></li>
                 <li><a href="matchmaking.php">Find Teammates</a></li>
                 <li><a href="profile.php" class="active">My Profile</a></li>
+                <li><a href="inbox.php" style="color:var(--plasma-cyan);">🔔 Inbox <?= $unread_count > 0 ? "<span style='color:red;'>({$unread_count})</span>" : "" ?></a></li>
                 <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
             <?php else: ?>
                 <li><a href="login_view.php" class="nav-btn">Launch →</a></li>
             <?php endif; ?>
-=======
-            <li><a href="matchmaking.php">Find Teammates</a></li>
-            <li><a href="profile.php" class="active">My Profile</a></li>
-            <li><a href="inbox.php" style="color:var(--plasma-cyan);">🔔 Inbox <?= $unread_count > 0 ? "<span style='color:red;'>({$unread_count})</span>" : "" ?></a></li>
-            <li><a href="logout.php" class="nav-btn nav-btn-danger">Logout</a></li>
->>>>>>> 94e851c385c6df0359a4fb444b007a1e962387e6
         </ul>
     </div>
 </nav>

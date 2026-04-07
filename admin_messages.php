@@ -65,9 +65,7 @@ html { scroll-behavior: smooth; }
     --text-dim: #7b8eb0;
     --text-mid: #a8b8d8;
     --text-bright: #e8f0ff;
-    --radius-sm: 6px;
-    --radius-md: 14px;
-    --radius-lg: 24px;
+    --sidebar-w: 240px;
 }
 
 body {
@@ -84,11 +82,11 @@ body {
 
 /* ── Sidebar ── */
 .sidebar {
-    width: 260px;
+    width: var(--sidebar-w);
     flex-shrink: 0;
     background: rgba(2, 2, 15, 0.98);
     border-right: 1px solid rgba(79, 195, 247, 0.1);
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.25rem;
     position: fixed;
     top: 0; left: 0;
     height: 100vh;
@@ -100,40 +98,40 @@ body {
 
 .sidebar-brand {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 0.75rem; text-decoration: none;
+    margin-bottom: 0.6rem; text-decoration: none;
 }
 .sidebar-brand-text {
     font-family: 'Orbitron', monospace;
-    font-size: 1.1rem; font-weight: 900;
+    font-size: 1.05rem; font-weight: 900;
     background: linear-gradient(90deg, #00e5ff, #7c4dff);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .sidebar-admin-badge {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
     color: #ff6d00; border: 1px solid rgba(255,109,0,0.25);
-    padding: 0.3rem 0.75rem; border-radius: 40px;
-    margin-bottom: 2rem; display: inline-block;
+    padding: 0.25rem 0.65rem; border-radius: 40px;
+    margin-bottom: 1.75rem; display: inline-block;
     background: rgba(255,109,0,0.06);
 }
 .sidebar-section {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: #7b8eb0; margin-bottom: 0.6rem; margin-top: 1.5rem;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #7b8eb0; margin-bottom: 0.5rem; margin-top: 1.25rem;
 }
 .sidebar-link {
-    display: flex; align-items: center; gap: 0.75rem;
-    padding: 0.65rem 0.85rem; border-radius: 6px;
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.6rem 0.8rem; border-radius: 6px;
     color: #7b8eb0; text-decoration: none;
-    font-size: 0.85rem; font-weight: 600;
-    transition: all 0.2s; margin-bottom: 0.2rem; letter-spacing: 0.03em;
+    font-size: 0.82rem; font-weight: 600;
+    transition: all 0.2s; margin-bottom: 0.15rem; letter-spacing: 0.02em;
 }
 .sidebar-link:hover, .sidebar-link.active {
     color: #e8f0ff; background: rgba(79,195,247,0.08);
 }
-.sidebar-link .link-icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+.sidebar-link .link-icon { font-size: 0.95rem; width: 16px; text-align: center; flex-shrink: 0; }
 .sidebar-logout {
-    margin-top: auto; padding-top: 1.5rem;
+    margin-top: auto; padding-top: 1.25rem;
     border-top: 1px solid rgba(79,195,247,0.08);
 }
 
@@ -150,8 +148,8 @@ body {
 
 /* ── Main Content ── */
 .dash-main {
-    margin-left: 260px; padding: 2rem 2.5rem;
-    min-height: 100vh; flex: 1; width: calc(100% - 260px);
+    margin-left: var(--sidebar-w); padding: 2rem 2rem 3rem;
+    min-height: 100vh; flex: 1; width: calc(100% - var(--sidebar-w));
 }
 
 /* ── Header ── */
@@ -210,7 +208,7 @@ body {
 /* ── Cards ── */
 .d-card {
     background: rgba(255,255,255,0.02); border: 1px solid rgba(79,195,247,0.1);
-    border-radius: 18px; padding: 1.75rem;
+    border-radius: 18px; padding: 1.5rem;
 }
 .d-card-title {
     font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700;
