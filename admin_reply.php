@@ -2,14 +2,6 @@
 require_once 'csrf.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// ══════════════════════════════════════════════════════════════════════════════
-//  📧 SMTP CONFIGURATION — Fill these in once and forget it.
-//  Use a Gmail account + an App Password (NOT your regular Gmail password).
-//  How to get an App Password:
-//    1. Go to myaccount.google.com → Security → 2-Step Verification (enable it)
-//    2. Then go to: myaccount.google.com/apppasswords
-//    3. Create a new App Password → copy the 16-char code → paste below
-// ══════════════════════════════════════════════════════════════════════════════
 define('SMTP_HOST',     'smtp.gmail.com');
 define('SMTP_PORT',     587);
 define('SMTP_USERNAME', 'your-gmail@gmail.com');   // ← YOUR Gmail address
