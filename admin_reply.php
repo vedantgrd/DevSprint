@@ -13,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 define('SMTP_HOST',     'smtp.gmail.com');
 define('SMTP_PORT',     587);
 define('SMTP_USERNAME', 'your-gmail@gmail.com');   // ← YOUR Gmail address
-define('SMTP_PASSWORD', 'xxxx xxxx xxxx xxxx');    // ← YOUR 16-char App Password
+define('SMTP_PASSWORD', 'xxxxxxxxxxxxxxxx');    // ← YOUR 16-char App Password (without spaces)
 define('SMTP_FROM',     'your-gmail@gmail.com');   // ← Same as USERNAME
 define('SMTP_FROM_NAME','DevSprint Admin');
 // ══════════════════════════════════════════════════════════════════════════════
