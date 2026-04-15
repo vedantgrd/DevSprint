@@ -1,93 +1,247 @@
-# Hackathon Discovery and Registration Web Application
+# 🚀 DevSprint - Find Nearby Hackathons
 
-![Flowchart](images/flowchart.jpeg)
-
-## Overview
-
-The **Hackathon Discovery and Registration Web Application** is a centralized, web-based platform designed to streamline the process of organizing, discovering, and participating in hackathons. In recent years, hackathons have emerged as an important medium for innovation, collaboration, and skill development. However, information about such events is often scattered. This project bridges the gap by providing a central interface tailored for both **participants** and **organizers (admins)**.
-
-### Abstract 
-The application leverages HTML, CSS, JavaScript, and PHP. It provides a unique location-based search using OpenStreetMap API that enables users to find hackathons strictly in their nearby areas (50 km radius) by simply entering their city. Participants can apply for hackathons seamlessly and present their linked-in integrated profile for admins to review and accept/reject. 
-
----
-
-## Technical Stack
-- **Frontend Technologies:** HTML, CSS, JavaScript
-- **Backend Technology:** PHP
-- **Database:** MySQL
-- **APIs Used:** OpenStreetMap API (Location search and mapping)
+<p align="center">
+  <img src="https://img.shields.io/badge/Project-Web%20Application-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Backend-PHP-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-yellow?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Database-MySQL-blueviolet?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/API-OpenStreetMap-green?style=for-the-badge" />
+</p>
 
 ---
 
-## Features & System Modules
+## 📌 Overview
 
-### 1. User Management (Authentication & Profile)
-Allows users and administrators to securely register, login, and maintain their profiles. 
-- Integrated LinkedIn profiling so organizers can quickly vet candidates.
-![Register Page](outputs/register/Screenshot%202026-04-14%20201806.png)
-![Login Page](outputs/login/Screenshot%202026-04-14%20201659.png)
-![User Profile](outputs/myprofile/Screenshot%202026-04-14%20201918.png)
+The Hackathon Discovery & Registration Web Application is a centralized platform designed to simplify the process of discovering, organizing, and participating in hackathons.
 
-### 2. Homepage & Dashboard
-After logging in, users are directed to the dashboard where they can access event details. 
-![Home](outputs/home/Screenshot%202026-04-14%20200759.png)
-
-### 3. Location-Based Search & Discovery Module
-Uses the OpenStreetMap API. The system filters events within a 50 km radius, helping users pinpoint nearby hackathons easily and efficiently.
-![Hackathons Map Search](outputs/hackathons/Screenshot%202026-04-14%20201157.png)
-
-### 4. Admin Management (Event Creation)
-Administrators can create hackathons, embed exact location coordinates on the map, list prerequisites, and specify dates.
-![Admin Dashboard](outputs/admin_home/Screenshot%2026-04-14%20202521.png)
-*(Note: Refer to actual images for admin creation page)*
-
-### 5. Participation Request Module
-Once a user applies for a hackathon, their request goes directly to the Admin. The Admin reviews the profile (and LinkedIn) and issues an Accept/Reject.
-![Admin Requests](outputs/admin_messages/Screenshot%202026-04-14%20202636.png)
-![User Notification](outputs/user_notification/Screenshot%202026-04-14%20202726.png)
-
-### 6. Team Matchmaking / Finder
-Users have the ability to seek teammates within the platform.
-![Find Teammates](outputs/findteammate/Screenshot%202026-04-14%20202048.png)
-![Teams Panel](outputs/teams/Screenshot%202026-04-14%202140.png)
-
-### 7. Communication System
-Built-in emailing / messaging interface for quick communication between admins and users.
-![Contact Interface](outputs/contact/Screenshot%202026-04-14%20202253.png)
-![Mailing](outputs/mail_messages/Screenshot%202026-04-14%20203004.png)
-![About Application](outputs/about/Screenshot%202026-04-14%20201347.png)
+Hackathon information is often scattered across different platforms, making it difficult for participants to find relevant opportunities. This project solves that problem by providing a single, user-friendly interface for both participants and organizers.
 
 ---
 
-## Objectives
+## 🧠 Abstract
 
-1. **Centralize Hackathon Data:** Stop relying on fragmented communication channels by bringing organizers and participants into one platform.
-2. **Location Awareness:** Enable local talent discovery by making events searchable by an exact 50 km radius.
-3. **End-to-End Tracking:** Track user applications and status notifications.
+This web application allows users to search and apply for hackathons based on their location using the OpenStreetMap API.
 
----
+📍 Users can:
+- Discover hackathons within a 50 km radius  
+- Apply using a LinkedIn/Github integrated profile  
+- Track application status
+- Communicate with Team Members
+- Create / Manage Teams
+- Local Team Group Chat
+- Find Team-Mates
+- Join existing teams
 
-## Development Team
-- **Vedant**
-- **Archit**
+🧑‍💼 Admins can:
+- Create and manage hackathons  
+- Review applications  
+- Accept / Reject participants and teams
+- Respond User Queries / Feedbacks 
 
----
-
-## System Requirements
-To run this project locally, ensure you have:
-- PHP (v7.4 or newer recommended)
-- MySQL Server
-- XAMPP / WAMP / MAMP stack
-- A web browser (Chrome, Firefox, Safari)
-
-## Installation Guide
-1. **Clone the repository.**
-2. **Set up Local Server**: Move the project folder to `htdocs` (if using XAMPP).
-3. **Database Import**: Create a new database in phpMyAdmin and import the `.sql` files from the `sql/` directory.
-4. **Update config**: Verify `includes/db_connect.php` has your proper MySQL username/password credentials.
-5. **Run the Project**: Open `http://localhost/WP-class/` in your browser.
+The system acts as a bridge between opportunity seekers and event organizers, improving accessibility and participation.
 
 ---
 
-## Conclusion
-This Web Application provides a practical and efficient solution to the problem of hackathon visibility and accessibility. By combining modern web technologies, it acts as a bridge between individuals seeking opportunities and those creating them. 
+## ✨ Features
+
+🔐 Authentication System  
+- Secure Login & Registration  
+- User Profile Management  
+- LinkedIn/Github Profile Integration  
+
+📍 Location-Based Discovery  
+- Map-based hackathon search  
+- 50 km radius filtering  
+- Real-time location visualization  
+
+🧑‍💼 Admin Dashboard  
+- Create/Edit/Delete Hackathons  
+- Add event details & location  
+- Manage participant requests  
+
+📩 Participation System  
+- Apply for hackathons  
+- Admin approval workflow  
+- Notification system  
+
+🤝 Team Matchmaking  
+- Find teammates  
+- Join/Create teams  
+
+💬 Communication  
+- Built-in messaging/email system  
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Frontend | HTML, CSS, JavaScript |
+| Backend  | PHP |
+| Database | MySQL |
+| API | OpenStreetMap, Github |
+| Server | Apache (XAMPP) |
+
+---
+
+## 🏗️ System Architecture
+
+<p align="center">
+  <img src="./outputs/system_architecture/sa.png" width="750"/>
+</p>
+
+---
+
+## 🔄 Modules
+
+- User Management  
+- Admin Management  
+- Hackathon Management  
+- Location-Based Search  
+- Participation Requests  
+- Database Management  
+
+---
+
+## 📸 Output
+
+### 🧑‍💻 User Side Interface
+
+#### 🏠 Home Dashboard
+<p align="center">
+  <img src="./outputs/home/home.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 🔐 Login / Registration
+<p align="center">
+  <img src="./outputs/login/login.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 🎯 Hackathons Page
+<p align="center">
+  <img src="./outputs/hackathons/hack1.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+<p align="center">
+  <img src="./outputs/hackathons/hack2.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 👤 Profile Page
+<p align="center">
+  <img src="./outputs/myprofile/profile.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 🤝 Find Teammate
+<p align="center">
+  <img src="./outputs/findteammate/findteam.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 👥 My Team
+<p align="center">
+  <img src="./outputs/teams/team.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 📩 Inbox / Messages
+<p align="center">
+  <img src="./outputs/user_notification/user_noti.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+<p align="center">
+  <img src="./outputs/mail_messages/mail.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### ℹ️ About Page
+<p align="center">
+  <img src="./outputs/about/about.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 📞 Contact Page
+<p align="center">
+  <img src="./outputs/contact/contact.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+---
+
+### 🧑‍💼 Admin Side Interface
+
+#### 📊 Admin Dashboard
+<p align="center">
+  <img src="./outputs/admin_home/admin1.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+<p align="center">
+  <img src="./outputs/admin_home/admin2.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+#### 💬 Admin Messages Panel
+<p align="center">
+  <img src="./outputs/admin_messages/admin_mes.png" width="750" style="border:2px solid #ddd; border-radius:10px; padding:5px;" />
+</p>
+
+---
+
+## 🎯 Objectives
+
+- Centralize hackathon information  
+- Enable location-based discovery  
+- Simplify participation process  
+- Improve organizer reach  
+
+---
+
+
+## 🚀 Installation Guide
+
+```bash
+git clone https://github.com/kryyo1441/WP-class
+
+# Move project to htdocs
+
+# Setup Database:
+- Open phpMyAdmin  
+- Create new database  
+- Import .sql file  
+
+# Configure Database:
+- Update includes/db_connect.php  
+
+# Run Project:
+http://localhost/WP-class/
+```
+
+---
+
+## 👨‍💻 Team
+
+| Name | Roll No |
+|------|--------|
+| Rushikesh Shekhar Vichare | 461 |
+| Vedant Nitin Garud | 462 |
+| Aayush Narayan Nair | 463 |
+| Archit Mangesh Deorukhakar | 464 |
+
+---
+
+## 📊 Results
+
+- Successfully implemented all modules  
+- Smooth user & admin workflow  
+- Efficient location-based filtering  
+- Clean and responsive UI  
+
+---
+
+## 🏁 Conclusion
+
+This project provides a scalable and efficient solution for hackathon discovery and management.
+
+It enhances:
+- Accessibility  
+- User experience  
+- Event visibility  
+
+---
+
+## 🔮 Future Scope
+
+- Mobile App Integration  
+- AI-based Recommendations  
+- Advanced Filters  
