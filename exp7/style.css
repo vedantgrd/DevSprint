@@ -87,3 +87,26 @@ label {
 .result-item:hover {
     background-color: #f0f0f0;
 }
+
+/* ── Responsive ── */
+@media(max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    #search {
+        padding: 10px;
+    }
+}
+
+@media(max-width: 400px) {
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+}

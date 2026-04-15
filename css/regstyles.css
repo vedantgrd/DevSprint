@@ -203,3 +203,38 @@ input[type="reset"]:hover {
 html {
     scroll-behavior: smooth;
 }
+
+/* ── Responsive ── */
+@media(max-width: 768px) {
+    .card {
+        padding: 25px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+}
+
+@media(max-width: 480px) {
+    .main-wrapper {
+        padding: 10px;
+    }
+    .card {
+        padding: 20px;
+        border: none;
+        box-shadow: none;
+    }
+    .card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    h1 {
+        font-size: 22px;
+    }
+    .button-group {
+        flex-direction: column;
+    }
+    input[type="submit"],
+    input[type="reset"] {
+        width: 100%;
+    }
+}
