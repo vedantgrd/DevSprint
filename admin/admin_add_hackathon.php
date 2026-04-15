@@ -1,0 +1,33 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+if (!isset($_SESSION['admin_logged_in'])) {
+    header("Location: ../admin/admin_login.php");
+    exit();
+}
+require_once '../includes/csrf.php';
+require_once '../includes/db_connect.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    require_csrf_token();
+    $title = $_POST['title'];
+    $location = $_POST['location'];
+    $latitude = !empty($_POST['latitude']) ? $_POST['latitude'] : null;
+    $longitude = !empty($_POST['longitude']) ? $_POST['longitude'] : null;
+    $date_start = $_POST['date_start'];
+    $date_end = $_POST['date_end'];
+    $prize_pool = $_POST['prize_pool'];
+    $description = $_POST['description'];
+    $application_type = $_POST['application_type'];
+
+    $stmt = $conn->prepare("INSERT INTO hackathons (title, location, latitude, longitude, date_start, date_end, prize_pool, description, application_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssddsssss", $title, $location, $latitude, $longitude, $date_start, $date_end, $prize_pool, $description, $application_type);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Hackathon added successfully!'); window.location.href='../admin/admin_dashboard.php';</script>";
+    } else {
+        echo "<script>alert('Error adding hackathon.'); window.history.back();</script>";
+    }
+    $stmt->close();
+}
+$conn->close();
+?>

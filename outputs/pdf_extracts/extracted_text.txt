@@ -1,0 +1,494 @@
+ 
+Department of Information Technology 
+Web Programming Lab Mini Project 
+Semester IV : Year 2025-26 
+Title of the Project : 
+Group Members 
+ 
+Group 
+No  
+Name   
+Email 
+Phone No.  
+ Roll No  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Abstract 
+Keywords 
+Introduction 
+Methodology ( System Flow Diagram  / Model Design ) 
+Algorithm Details (If any ) 
+Results and Discussion ( Screenshots / Charts /Figures )  
+Conclusion  
+References  
+Other Details if Any 
+ 
+ 
+Prof. Christopher Uzhuthuval  
+Faculty (Web Programming Lab)  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Abstract – 
+ 
+The Hackathon Discovery and Registration Web Application is a web-based platform designed to 
+streamline the process of organizing, discovering, and participating in hackathons. In recent years, 
+hackathons have emerged as an important medium for innovation, collaboration, and skill 
+development among students and professionals. However, information about such events is often 
+scattered across multiple sources, making it difficult for interested participants to find relevant 
+opportunities. This project aims to address this challenge by providing a centralized and user-
+friendly platform where users can easily access and manage hackathon-related information. 
+ 
+The application is developed using a combination of HTML, CSS, JavaScript, and PHP. HTML 
+and CSS are used to design and structure the user interface, ensuring clarity and responsiveness. 
+JavaScript is utilized to enhance interactivity and improve the overall user experience. PHP is used 
+as the server-side scripting language to manage backend operations such as user authentication, 
+data processing, and database interaction. The integration of these technologies results in a 
+dynamic and efficient web application. 
+ 
+One of the key features of the system is its location-based search functionality, which enables users 
+to find hackathons in their nearby areas by simply entering their city. This feature significantly 
+reduces the time and effort required to search for relevant events. Additionally, the platform 
+supports event registration and data storage, ensuring that all information is organized and easily 
+retrievable. 
+ 
+The proposed system not only benefits participants by providing easy access to hackathons but 
+also assists organizers in promoting their events to a wider audience without relying on manual or 
+fragmented communication methods. It acts as a bridge between individuals seeking opportunities 
+and those creating them. 
+In conclusion, the Hackathon Discovery and Registration Web Application provides a practical 
+and efficient solution to the problem of hackathon visibility and accessibility. By combining 
+modern web technologies with a user-centric approach, the system enhances the overall experience 
+of discovering and participating in hackathons, thereby encouraging innovation, collaboration, and 
+learning within the community. 
+ 
+Keywords - Hackathon, Web Application, Event Management System, Location-Based Search, 
+User Registration, Event Listing, PHP, JavaScript, HTML, CSS, Database Management, Online 
+Platform, User Interface, Event Discovery, Participant Engagement 
+ 
+Introduction – 
+ 
+In the modern digital era, web applications play a significant role in connecting people, sharing 
+information, and providing efficient solutions to real-world problems. One such area where 
+technology can make a meaningful impact is in the organization and discovery of hackathons. 
+Hackathons are events where individuals or teams collaborate intensively to develop innovative 
+solutions, enhance their technical skills, and solve practical challenges within a limited period of 
+time. These events are widely conducted by educational institutions, organizations, and 
+communities to promote creativity, teamwork, and problem-solving abilities. 
+ 
+Despite their growing popularity, information about hackathons is often not easily accessible. 
+Many events are advertised through different platforms such as social media, websites, or internal 
+networks, leading to scattered and unorganized information. As a result, interested participants 
+may miss valuable opportunities simply because they are unaware of events happening in their 
+area. Similarly, event organizers may face difficulties in reaching a wider audience and managing 
+participant registrations effectively. 
+ 
+To overcome these challenges, the Hackathon Discovery and Registration Web Application has 
+been developed as a centralized platform that bridges the gap between organizers and participants. 
+The system allows organizers to register and publish detailed information about their hackathons, 
+including event name, date, location, and description. At the same time, users can search for 
+hackathons based on their city, view relevant details, and choose events that match their interests 
+and availability. 
+ 
+The application is designed using standard web technologies such as HTML, CSS, JavaScript, and 
+PHP, which ensure a structured, responsive, and interactive user experience. It focuses on 
+simplicity, accessibility, and efficiency so that users with basic technical knowledge can easily 
+navigate and use the platform without difficulty. 
+ 
+The introduction of this system aims to simplify the process of discovering and managing 
+hackathons by providing a single, reliable source of information. It not only enhances user 
+convenience but also encourages greater participation in hackathons by making them more visible 
+and accessible. Overall, the project demonstrates how web-based solutions can effectively address 
+real-world challenges and improve communication and engagement within a community. 
+ 
+ 
+ 
+1.1 Problem Statement 
+ 
+In the current digital environment, information about hackathons is widely distributed across 
+multiple platforms such as social media, college websites, and online forums. Due to this scattered 
+nature of information, participants often face difficulties in finding relevant hackathons based on 
+their location and interests. 
+ 
+There is no single centralized system that effectively connects hackathon organizers and 
+participants while also providing location-based filtering. As a result, users may miss important 
+opportunities due to lack of awareness or difficulty in searching events nearby. 
+Additionally, organizers face challenges in reaching the right audience and managing participant 
+registrations efficiently through manual or unstructured systems. 
+ 
+Therefore, there is a need for a centralized web-based platform that allows users to discover 
+hackathons based on location and enables organizers to manage events and participant requests in 
+an organized manner. 
+ 
+2. Objectives 
+ 
+The main objectives of the Hackathon Discovery and Registration Web Application are: 
+ 
+2.1 Primary Objectives: 
+• 
+To develop a centralized platform for hackathon discovery and registration. 
+• 
+To allow users to search hackathons based on location. 
+• 
+To enable organizers to create and manage hackathon events. 
+2.2 Secondary Objectives: 
+• 
+To implement user profile management with LinkedIn integration. 
+• 
+To provide a request-based participation system. 
+• 
+To improve accessibility and visibility of hackathon events. 
+2.3 Technical Objectives: 
+• 
+To build a responsive web application using HTML, CSS, JavaScript, and PHP. 
+• 
+To integrate OpenStreetMap API for location-based services. 
+• 
+To ensure efficient data storage and retrieval using a database system. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Methodology – 
+ 
+The methodology used for developing the Hackathon Discovery and Registration Web Application 
+follows a systematic approach, including requirement analysis, design, implementation, and 
+testing. 
+ 
+In the requirement analysis phase, the system is designed to support two types of users: 
+administrators (hackathon organizers) and participants. Administrators can create and manage 
+hackathon events, while users can search for hackathons based on their location and apply for 
+participation. Additional features such as user profiles and LinkedIn profile linking are also 
+considered. 
+ 
+During the design phase, the structure of the application is planned. The frontend is designed using 
+HTML and CSS to provide a simple and user-friendly interface. The backend is structured using 
+PHP to handle data processing, user authentication, and database operations. 
+In the implementation phase, the system is developed using HTML, CSS, JavaScript, and PHP. 
+JavaScript is used for interactivity and form validation, while PHP manages server-side logic. The 
+application also integrates the OpenStreetMap API to provide location-based services. 
+Administrators can map the exact location of their hackathon, and users can search for events 
+within a 50 km radius. 
+ 
+The system includes a participation request feature where users can apply for hackathons, and 
+administrators can accept or reject requests after reviewing user profiles, including their LinkedIn 
+links. User profile data is stored to allow quick and easy registration for future events. 
+Finally, the system is tested to ensure all functionalities, such as registration, login, event creation, 
+map integration, and search features, work correctly and efficiently. 
+Overall, this methodology ensures a simple, functional, and user-friendly system for managing and 
+discovering hackathons. 
+ 
+ 
+ 
+ 
+ 
+System Flow Diagram – 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+System Modules – 
+ 
+4. System Modules 
+The Hackathon Discovery and Registration Web Application is divided into several functional 
+modules. Each module is designed to handle specific tasks, ensuring smooth operation of the 
+system and better user experience. 
+ 
+4.1 User Management Module 
+This module handles user registration, login, and profile management. Users can create an 
+account by providing necessary details, including their LinkedIn profile link. Once registered, 
+users can log in and access their dashboard. This module ensures secure authentication and easy 
+access to system features. 
+ 
+4.2 Admin Management Module 
+The admin module is responsible for managing hackathon events. Administrators can create new 
+hackathons by entering event details such as name, description, date, and requirements. They 
+also have the authority to update or delete events and manage participation requests submitted by 
+users. 
+ 
+4.3 Hackathon Management Module 
+This module focuses on storing and managing hackathon-related data. It includes event creation, 
+updating event details, and displaying hackathon information to users. All hackathon data is 
+stored in the database for easy retrieval and management. 
+ 
+4.4 Location-Based Search Module 
+This is one of the key modules of the system. It uses OpenStreetMap API to allow users to 
+search for hackathons based on their location. The system filters events within a 50 km radius, 
+helping users find nearby hackathons easily and efficiently. 
+ 
+4.5 Participation Request Module 
+This module allows users to apply for hackathons they are interested in. Once a user applies, the 
+request is sent to the admin. The admin can review the applicant’s profile, including their 
+LinkedIn information, and then decide to accept or reject the request. 
+ 
+4.6 Database Management Module 
+This module handles the storage and retrieval of all system data, including user information, 
+hackathon details, and participation requests. It ensures data consistency, security, and efficient 
+access during system operations. 
+ 
+Overall, these modules collectively ensure that the system works in an organized and efficient 
+manner, providing a seamless experience for both organizers and participants. 
+ 
+ 
+System Architecture – 
+ 
+5. System Architecture 
+The Hackathon Discovery and Registration Web Application follows a client-server architecture 
+model. The system is designed to ensure smooth communication between users (clients), the web 
+application, and the database. 
+The architecture is divided into three main layers: 
+ 
+5.1 User Interface Layer (Frontend) 
+This layer is responsible for the interaction between the user and the system. It is developed using 
+HTML, CSS, and JavaScript. Users can access features such as registration, login, searching 
+hackathons, and applying for events through this interface. The frontend ensures that the system 
+is simple, responsive, and user-friendly. 
+ 
+5.2 Application Layer (Backend) 
+The backend layer is developed using PHP. It handles all the business logic of the system, 
+including user authentication, hackathon creation, processing participation requests, and location-
+based search functionality. This layer acts as a bridge between the frontend and the database. 
+ 
+5.3 Data Layer (Database) 
+This layer is responsible for storing and managing all system data. It includes user details, 
+hackathon information, and participation requests. The database ensures secure and efficient 
+storage and retrieval of data whenever required by the application. 
+ 
+5.4 External API Integration 
+The system also integrates OpenStreetMap API to provide location-based services. This API 
+allows administrators to mark exact locations of hackathons and enables users to search for events 
+within a 50 km radius based on their location. 
+ 
+5.5 System Flow Overview 
+1. Users access the web application through a browser. 
+2. Requests are sent to the backend server. 
+3. PHP processes the request and interacts with the database. 
+4. Data is retrieved and sent back to the frontend. 
+5. Results are displayed to the user in a structured format. 
+ 
+5.6 Architecture Diagram (To be Included) 
+A system architecture diagram should be included in this section showing: 
+• 
+User (Admin / Participant) 
+• 
+Frontend (HTML, CSS, JavaScript) 
+• 
+Backend (PHP) 
+• 
+Database 
+• 
+OpenStreetMap API integration 
+This diagram visually represents how different components of the system interact with each other. 
+ 
+Overall, the system architecture ensures a well-structured flow of data and efficient 
+communication between all components, making the application scalable, maintainable, and easy 
+to use. 
+ 
+ 
+System Requirements – 
+ 
+6. System Requirements 
+The Hackathon Discovery and Registration Web Application requires both hardware 
+and software components for proper development, deployment, and execution. 
+These requirements ensure that the system runs efficiently and provides a smooth 
+user experience. 
+ 
+6.1 Hardware Requirements 
+The minimum hardware requirements for running the system are as follows: 
+• Processor: Intel i3 or higher 
+• RAM: Minimum 4 GB or above 
+• Storage: At least 500 MB free space for project files 
+• Input Devices: Keyboard and Mouse 
+• Display: Standard monitor with minimum resolution support 
+• Internet Connection: Required for accessing map services and online 
+functionalities 
+These hardware requirements are sufficient to support both development and 
+execution of the web application without performance issues. 
+ 
+6.2 Software Requirements 
+The software requirements for the development and execution of the system include: 
+• Operating System: Windows / Linux / macOS 
+• Frontend Technologies: HTML, CSS, JavaScript 
+• Backend Technology: PHP 
+• Database: MySQL (or any compatible relational database) 
+• Web Server: Apache (XAMPP / WAMP recommended for local 
+development) 
+• Browser: Google Chrome / Mozilla Firefox / Microsoft Edge 
+• API Integration: OpenStreetMap API for location-based services 
+ 
+6.3 Functional Requirements 
+The functional requirements define the main features of the system: 
+6.3.1 User Functions 
+• User registration and login 
+• Profile creation and management 
+• Viewing and searching hackathons 
+• Applying for hackathons 
+6.3.2 Admin Functions 
+• Creating and managing hackathons 
+• Mapping event location using OpenStreetMap 
+• Viewing participant requests 
+• Accepting or rejecting applications 
+ 
+6.4 Non-Functional Requirements 
+The system also satisfies the following non-functional requirements: 
+• Usability: The system is simple and user-friendly for all users 
+• Performance: Fast response time for search and data retrieval 
+• Security: User authentication ensures secure access 
+• Scalability: Can support an increasing number of users and events 
+• Reliability: Ensures stable and consistent system performance 
+ 
+Overall, the system requirements ensure that the application operates efficiently and 
+meets the expected functional and technical standards for a web-based hackathon 
+management platform. 
+ 
+ Results and Discussion – 
+ 
+The Hackathon Discovery and Registration Web Application was successfully 
+developed and tested to ensure that all modules function as expected. The system 
+provides a smooth and interactive experience for both administrators and 
+participants. 
+The results of the system are demonstrated through various interfaces and 
+functionalities, which are explained below. Screenshots should be included 
+accordingly in this section to support the working of the application. 
+ 
+7.1 Homepage Interface 
+The homepage serves as the entry point of the application. It provides options for 
+user registration and login. It is designed to be simple and user-friendly, allowing 
+users to easily navigate to different sections of the system. 
+  (Insert Screenshot: Homepage / Landing Page) 
+ 
+7.2 User Registration and Login 
+The registration page allows new users to create an account by entering their details, 
+including their LinkedIn profile link. After successful registration, users can log in 
+to access the system. 
+  (Insert Screenshot: Registration Page + Login Page) 
+ 
+7.3 User Dashboard 
+After login, participants are directed to their dashboard. From here, they can search 
+for hackathons based on location, view event details, and apply for participation. 
+  (Insert Screenshot: User Dashboard) 
+ 
+7.4 Hackathon Search and Location Feature 
+One of the key features of the system is location-based search. Users can find 
+hackathons within a 50 km radius using the OpenStreetMap API. This improves 
+accessibility and helps users discover nearby events easily. 
+  (Insert Screenshot: Map/Search Results Page) 
+ 
+7.5 Hackathon Details and Application 
+Users can view complete details of a selected hackathon, including description, date, 
+and location. They can also apply for participation directly through the platform. 
+  (Insert Screenshot: Hackathon Details Page + Apply Button) 
+ 
+7.6 Admin Dashboard 
+The admin dashboard allows organizers to create and manage hackathons. Admins 
+can enter event details and select exact locations using map integration. 
+  (Insert Screenshot: Admin Dashboard + Create Hackathon Page) 
+ 
+7.7 Participation Request Management 
+Admins can view all user requests for a hackathon. They can check user profiles, 
+including LinkedIn information, and then accept or reject applications based on 
+requirements. 
+  (Insert Screenshot: Admin Request Management Page) 
+ 
+7.8 Discussion 
+The system successfully fulfills its objective of connecting hackathon organizers and 
+participants through a centralized platform. The integration of location-based search 
+improves usability, while the admin control system ensures proper management of 
+events and participants. The application performs efficiently in handling user 
+requests, event creation, and data management. 
+Overall, the results demonstrate that the system is functional, reliable, and effective 
+in achieving its intended purpose. 
+ 
+ 
+ 
+ 
+ 
+Conclusion- 
+ 
+The Hackathon Discovery and Registration Web Application was successfully 
+developed as a centralized platform to simplify the process of finding, organizing, 
+and participating in hackathons. The system effectively connects event organizers 
+and participants, reducing the challenges caused by scattered information and 
+manual registration processes. 
+ 
+The application provides key functionalities such as user registration, profile 
+management with LinkedIn integration, hackathon creation by administrators, 
+location-based search using OpenStreetMap API, and participation request 
+management. These features ensure that users can easily discover hackathons near 
+their location and apply for them in an efficient manner. 
+ 
+The use of web technologies such as HTML, CSS, JavaScript, and PHP allowed the 
+development of a responsive and interactive system. The integration of a database 
+ensures proper storage and retrieval of user and event data, making the system 
+reliable and scalable. 
+ 
+Overall, the project demonstrates how a well-designed web application can improve 
+accessibility, enhance user experience, and streamline event management. The 
+system successfully meets its objectives and provides a strong foundation for future 
+enhancements 
+such 
+as 
+mobile 
+application 
+development 
+and 
+advanced 
+recommendation features. 
+ 

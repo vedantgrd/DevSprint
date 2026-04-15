@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About Us | DevSprint</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Internal CSS specific to About page -->
+    <style>
+        body {
+            margin: 16px;
+            background: linear-gradient(180deg, var(--bg), #eef7f3);
+            /* Override global white text so content is readable on light background */
+            color: #111827;
+        }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 24px 28px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--pink-900);
+        }
+
+        .hero-img {
+            border-radius: 12px;
+            margin: 12px 0 20px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+        }
+
+        /* Box model demo wrapper */
+        .box-demo-wrapper {
+            display: flex;              /* Flexbox */
+            gap: 20px;
+            margin: 28px 0;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .box-legend {
+            flex: 1 1 220px;
+        }
+
+        .box-diagram {
+            flex: 1 1 220px;
+        }
+
+        /* Box model "diagram" using nested boxes */
+        .box-outer {
+            background: #ffe0f0;
+            padding: 18px;              /* Padding area */
+            border: 3px solid #C71585;  /* Border */
+            margin: 8px;                /* Margin area (visible via surrounding space) */
+        }
+
+        .box-inner {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .box-caption {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        /* Pseudo-classes & pseudo-elements on list */
+        .about-list li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 6px;
+            transition: transform 0.12s ease, color 0.12s ease;
+        }
+
+        .about-list li::before {
+            content: "•";
+            position: absolute;
+            left: 6px;
+            top: 0;
+            color: var(--pink-700);
+            font-weight: 700;
+        }
+
+        .about-list li:hover {
+            transform: translateX(2px);
+            color: var(--pink-900);
+        }
+
+        /* Make layout adapt on smaller screens */
+        @media (max-width: 768px) {
+            .box-demo-wrapper {
+                flex-direction: column;
+            }
+
+            main {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <h1>About DevSprint</h1>
+    <!-- Hero Image -->
+    <img 
+        src="https://images.unsplash.com/photo-1555949963-aa79dcee981c"
+        alt="Developers working at a hackathon"
+        width="100%"
+        height="300"
+        class="hero-img"
+    >
+    <p style="border-left: 4px solid #C71585; padding-left: 10px;">
+        <strong>DevSprint</strong> is a platform that helps developers discover nearby hackathons and coding events.
+        It brings all essential event-related information into one place to save time and effort.
+    </p>
+    <p>
+        Our platform allows users to browse available project ideas, understand required resources,
+        estimate project costs, and view winning prizes before participating in any event.
+    </p>
+    <h2>Our Mission</h2>
+    <p>
+        To simplify the hackathon experience by providing developers with complete, clear, and reliable
+        information in a single platform.
+    </p>
+    <h2>Why DevSprint?</h2>
+    <!-- Section Image -->
+    <img 
+        src="https://images.unsplash.com/photo-1518770660439-4636190af475"
+        alt="Coding setup and development"
+        width="400"
+        style="border-radius: 12px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);"
+    >
+    <p>
+        Developers often struggle to find hackathon details scattered across multiple websites.
+        DevSprint solves this problem by organizing event details, project ideas, and resources
+        in a structured and easy-to-understand format.
+    </p>
+    <h2>Sample Hackathon Overview</h2>
+    <table border="1" cellpadding="10" cellspacing="0">
+        <tr>
+            <th>Event Name</th>
+            <th>Project Idea</th>
+            <th>Required Resources</th>
+            <th>Estimated Cost</th>
+            <th>Winning Prize</th>
+        </tr>
+        <tr>
+            <td>CodeSprint 2026</td>
+            <td>Smart Traffic Management</td>
+            <td>IoT Sensors, Cloud Server</td>
+            <td>₹2,500</td>
+            <td>₹50,000</td>
+        </tr>
+        <tr>
+            <td>HackVerse</td>
+            <td>AI Resume Analyzer</td>
+            <td>Python, ML Models</td>
+            <td>₹1,500</td>
+            <td>₹30,000</td>
+        </tr>
+        <tr>
+            <td>DevFest</td>
+            <td>Online Code Judge</td>
+            <td>Node.js, Database</td>
+            <td>₹2,000</td>
+            <td>₹40,000</td>
+        </tr>
+    </table>
+    <!-- Box Model Demo Section -->
+    <h2>How the CSS Box Model Works</h2>
+    <div class="box-demo-wrapper">
+        <div class="box-legend">
+            <p>The box model describes how <strong>content</strong>, <strong>padding</strong>, <strong>border</strong>, and <strong>margin</strong> build every box on a web page.</p>
+            <ul class="about-list">
+                <li>Content: the actual text or image.</li>
+                <li>Padding: transparent space inside the box around the content.</li>
+                <li>Border: the visible line surrounding padding and content.</li>
+                <li>Margin: space outside the border separating boxes.</li>
+            </ul>
+        </div>
+        <div class="box-diagram">
+            <div class="box-outer">
+                <div class="box-inner">
+                    This is the <strong>content</strong> area.
+                </div>
+            </div>
+            <p class="box-caption">Diagram styled using margin, border, padding, and background color.</p>
+        </div>
+    </div>
+
+    <h2>What You Can Do on DevSprint</h2>
+    <ul class="about-list">
+        <li>Find nearby hackathons and coding events</li>
+        <li>Browse project ideas for different skill levels</li>
+        <li>View required tools and technologies</li>
+        <li>Check estimated project costs</li>
+        <li>Explore winning prizes and rewards</li>
+    </ul>
+    <p>
+        <strong>DevSprint</strong> helps developers focus on innovation, collaboration, and learning —
+        not searching for scattered information.
+    </p>
+    <hr>
+    <p style="text-align:center; font-size: 0.9rem;" class="muted">
+        Build faster. Compete smarter. Sprint with DevSprint.
+    </p>
+    </main>
+</body>
+</html>
